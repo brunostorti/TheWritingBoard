@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 import json
 
 # Configuração inicial da pontuação e lista de perguntas
@@ -16,46 +16,56 @@ questions_nivel1 = [
         "answer": 2
     },
     {
-        "question": "Qual é a estrutura básica de um texto dissertativo?",
-        "options": ["1. Introdução, desenvolvimento, conclusão", "2. Introdução, resumo, conclusão", "3. Tese, antítese, síntese", "4. Parágrafo, frase, palavra"],
-        "answer": 1
-    },
-    {
-        "question": "O que é um argumento em um texto dissertativo?",
-        "options": ["1. Uma opinião sem provas", "2. Uma evidência que sustenta a tese", "3. Uma citação famosa", "4. Uma crítica à tese"],
-        "answer": 2
-    },
-    {
-        "question": "O que deve conter no parágrafo de conclusão?",
-        "options": ["1. Novos argumentos", "2. Citações", "3. Síntese da discussão", "4. Introdução de ideias"],
+        "question": "O que deve ser feito no parágrafo de desenvolvimento?",
+        "options": ["1. Apresentar ideias novas", "2. Reafirmar a introdução", "3. Desenvolver e argumentar a tese", "4. Concluir o texto"],
         "answer": 3
     },
     {
-        "question": "Qual é a função do desenvolvimento em um texto dissertativo?",
-        "options": ["1. Apresentar a tese", "2. Fundamentar a tese com argumentos", "3. Concluir o texto", "4. Introduzir o tema"],
-        "answer": 2
-    },
-    {
-        "question": "O que caracteriza um bom argumento?",
-        "options": ["1. Opinião pessoal", "2. Informação irrelevante", "3. Dados e exemplos concretos", "4. Palavras complexas"],
+        "question": "Qual a função principal de um texto dissertativo?",
+        "options": ["1. Narrar uma história", "2. Expressar sentimentos", "3. Argumentar sobre um tema", "4. Divertir o leitor"],
         "answer": 3
     },
     {
-        "question": "Qual recurso pode reforçar um argumento em um texto?",
-        "options": ["1. Dados estatísticos", "2. Um resumo", "3. Uma pergunta retórica", "4. Uma palavra de transição"],
+        "question": "O que deve ser evitado em um texto dissertativo-argumentativo?",
+        "options": ["1. Argumentos baseados em dados", "2. Opiniões pessoais sem embasamento", "3. Estrutura clara e organizada", "4. Exemplos reais"],
+        "answer": 2
+    },
+    {
+        "question": "Qual é a característica de uma boa conclusão?",
+        "options": ["1. Repetir a tese exatamente igual", "2. Trazer novos argumentos", "3. Síntese das ideias e solução para o problema", "4. Criticar o tema"],
+        "answer": 3
+    },
+    {
+        "question": "Como os argumentos devem ser apresentados?",
+        "options": ["1. Em uma sequência lógica e estruturada", "2. De forma aleatória", "3. Somente no parágrafo de conclusão", "4. Em tópicos separados"],
         "answer": 1
+    },
+    {
+        "question": "Em um texto dissertativo-argumentativo, a estrutura básica é formada por:",
+        "options": ["1. Introdução, meio e fim", "2. Tese, desenvolvimento e conclusão", "3. Título e parágrafos", "4. Desenvolvimento e finalização"],
+        "answer": 2
+    },
+    {
+        "question": "Qual das alternativas é mais adequada para iniciar um parágrafo de desenvolvimento?",
+        "options": ["1. Primeiramente", "2. Em conclusão", "3. Em contrapartida", "4. No entanto"],
+        "answer": 1
+    },
+    {
+        "question": "Qual o objetivo da tese na introdução?",
+        "options": ["1. Explicar todos os detalhes do tema", "2. Posicionar a opinião do autor sobre o tema", "3. Descrever um exemplo prático", "4. Concluir o texto"],
+        "answer": 2
     }
 ]
 
 # Função para atualizar o ranking
-def atualizar_ranking(pontos):
+def atualizar_ranking(nome_jogador, pontos):
     try:
         with open('ranking.json', 'r') as file:
             ranking = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         ranking = []
 
-    nome_jogador = input("Digite seu nome para registrar no ranking: ")
+    # Adiciona a pontuação do jogador ao ranking
     ranking.append({"nome": nome_jogador, "pontos": pontos})
 
     with open('ranking.json', 'w') as file:
@@ -77,6 +87,10 @@ def iniciar_nivel1():
 
     # Variável para controlar a pergunta atual
     pergunta_atual = 0
+
+    # Função para atualizar o visor de pontos
+    def update_score():
+        score_label.config(text=f"Pontos: {pontos}")
 
     # Função para mostrar a próxima pergunta
     def show_question():
@@ -103,7 +117,7 @@ def iniciar_nivel1():
         global pontos
         if selected_answer == correct_answer:
             pontos += 5  # Acrescentar pontos para resposta correta
-            score_label.config(text=f"Pontos: {pontos}")  # Atualiza o visor de pontos
+            update_score()  # Atualiza o visor de pontos
 
         pergunta_atual += 1
         show_question()  # Avança para a próxima pergunta diretamente
@@ -118,7 +132,7 @@ def iniciar_nivel1():
         btn.pack(pady=5)
 
     # Botão para iniciar perguntas do Nível 1
-    start_button = tk.Button(tela_nivel1, text="Iniciar Perguntas do Nível 1", command=show_question)
+    start_button = tk.Button(tela_nivel1, text="Iniciar Perguntas do Nível 1", command=lambda: [show_question(), start_button.config(state="disabled")])
     start_button.pack(pady=20)
 
     # Botão "Voltar" para retornar ao módulo
@@ -131,9 +145,19 @@ def iniciar_nivel1():
     botao_voltar.pack(side=tk.BOTTOM, pady=20)
 
     def finalizar_nivel():
-        messagebox.showinfo("Nível 1 Concluído", f"Você finalizou o Nível 1 com {pontos} pontos!")
-        atualizar_ranking(pontos)  # Atualizar ranking com a pontuação final
-        tela_nivel1.destroy()
+        global pontos
+        nome_jogador = simpledialog.askstring("Registro no Ranking", "Digite seu nome para registrar no ranking:")
+        if nome_jogador:
+            messagebox.showinfo("Nível 1 Concluído", f"Você finalizou o Nível 1 com {pontos} pontos!")
+            atualizar_ranking(nome_jogador, pontos)  # Atualizar ranking com a pontuação final
+
+            # Aqui chamamos a tela de ranking
+            tela_nivel1.destroy()
+            import ranking  # Importa a tela de ranking
+            ranking.exibir_ranking()  # Chama a função para exibir o ranking
+        else:
+            messagebox.showwarning("Nível 1 Concluído", "Nome não registrado no ranking.")
+            tela_nivel1.destroy()  # Fechar a tela do nível mesmo que não tenha registrado o nome
 
     tela_nivel1.mainloop()
 

@@ -34,6 +34,7 @@ def iniciar_ranking():
     tela_ranking = tk.Tk()
     tela_ranking.title("The Writing Board - Ranking")
     tela_ranking.geometry("500x500")
+    tela_ranking.minsize(300, 400)  # Tamanho mínimo da janela
 
     # Introdução ao jogador
     introducao = tk.Label(
@@ -47,17 +48,35 @@ def iniciar_ranking():
 
     # Exibição dos últimos resultados
     resultados_frame = tk.Frame(tela_ranking)
-    resultados_frame.pack(pady=20)
+    resultados_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
+    # Criar um canvas para scroll nos resultados
+    canvas = tk.Canvas(resultados_frame)
+    scrollbar = tk.Scrollbar(resultados_frame, orient="vertical", command=canvas.yview)
+    scrollable_frame = tk.Frame(canvas)
+
+    # Configurar o canvas para permitir scrolling
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    # Adicionar os resultados ao scrollable_frame
     for i, resultado in enumerate(dados_ranking, start=1):
         resultado_texto = f"{i}. Módulo: {resultado['modulo']} - Pontos: {resultado['pontos']} - Data: {resultado['data']}"
-        resultado_label = tk.Label(resultados_frame, text=resultado_texto, font=("Arial", 12))
+        resultado_label = tk.Label(scrollable_frame, text=resultado_texto, font=("Arial", 12))
         resultado_label.pack(anchor="w", pady=5)
 
     # Função para voltar para a tela anterior (interface.py)
     def voltar_interface():
         tela_ranking.destroy()
-        import interface
+        import interface  # Certifique-se de que o arquivo interface.py está no mesmo diretório
         interface.iniciar_interface()
 
     # Botão Voltar
@@ -69,4 +88,4 @@ def iniciar_ranking():
 # Exemplo de uso da função de adicionar resultado
 # Aqui você deve substituir pela lógica real do seu jogo
 # Adicione esta chamada após o jogador completar um nível
-# Por exemplo
+# Por exemplo: adicionar_resultado("Módulo 1", 100)

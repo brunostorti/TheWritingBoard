@@ -1,71 +1,88 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 import json
 
-# Configuração inicial da pontuação e lista de perguntas do Nível 3
+# Configuração inicial da pontuação e listas de perguntas
 pontos = 0
+
+# Perguntas do Nível 1 (já definidas anteriormente)
+questions_nivel1 = [
+    {
+        "question": "O que é uma tese em um texto dissertativo?",
+        "options": ["1. Um exemplo", "2. Uma citação", "3. A principal ideia do autor", "4. Um argumento secundário"],
+        "answer": 3
+    },
+    {
+        "question": "Para que serve o parágrafo de introdução?",
+        "options": ["1. Apresentar a conclusão", "2. Apresentar a tese", "3. Fornecer argumentos", "4. Criticar a tese"],
+        "answer": 2
+    },
+    # ... (demais perguntas do Nível 1)
+]
+
+# Perguntas do Nível 3
 questions_nivel3 = [
     {
-        "question": "Qual é o papel do repertório sociocultural em uma redação argumentativa?",
-        "options": ["1. Distrair o leitor", "2. Enriquecer a argumentação", "3. Fornecer conclusões", "4. Descrever o tema"],
+        "question": "Qual é o objetivo principal de uma proposta de intervenção?",
+        "options": ["1. Finalizar o texto", "2. Apresentar soluções para o problema", "3. Criticar o tema", "4. Explicar a tese"],
         "answer": 2
     },
     {
-        "question": "O que é uma citação direta?",
-        "options": ["1. Uma ideia própria do autor", "2. Uma reprodução exata das palavras de outra pessoa", "3. Uma paráfrase", "4. Um resumo"],
+        "question": "O que é uma proposta de solução viável?",
+        "options": ["1. Uma solução utópica", "2. Uma solução possível e exequível", "3. Uma crítica ao problema", "4. Um resumo do texto"],
         "answer": 2
     },
     {
-        "question": "Por que é importante ter clareza na escrita?",
-        "options": ["1. Para aumentar o número de palavras", "2. Para garantir que o leitor compreenda a mensagem", "3. Para impressionar o leitor", "4. Para confundir o leitor"],
-        "answer": 2
-    },
-    {
-        "question": "Qual é a função da tese em uma redação?",
-        "options": ["1. Introduzir novos argumentos", "2. Defender a posição do autor", "3. Fazer perguntas", "4. Concluir o texto"],
-        "answer": 2
-    },
-    {
-        "question": "Como o uso de dados estatísticos pode fortalecer um argumento?",
-        "options": ["1. Tornando o texto mais longo", "2. Fornecendo embasamento factual", "3. Distraindo o leitor", "4. Confundindo o leitor"],
-        "answer": 2
-    },
-    {
-        "question": "O que significa a palavra 'concisão' em uma redação?",
-        "options": ["1. Uso excessivo de palavras", "2. Objetividade e clareza", "3. Uso de termos complexos", "4. Extensão desnecessária"],
-        "answer": 2
-    },
-    {
-        "question": "Em qual parte da redação é ideal introduzir o contra-argumento?",
-        "options": ["1. Introdução", "2. Desenvolvimento", "3. Conclusão", "4. Título"],
-        "answer": 2
-    },
-    {
-        "question": "Por que o uso de conectivos é importante em uma argumentação?",
-        "options": ["1. Para organizar e encadear ideias", "2. Para deixar o texto confuso", "3. Para alongar o texto", "4. Para omitir argumentos"],
+        "question": "Qual é a importância do agente na proposta de intervenção?",
+        "options": ["1. Apontar responsabilidades específicas", "2. Aumentar a conclusão", "3. Desenvolver o argumento", "4. Reforçar a introdução"],
         "answer": 1
     },
     {
-        "question": "Qual o papel da linguagem formal em uma redação argumentativa?",
-        "options": ["1. Dar credibilidade ao texto", "2. Tornar o texto mais leve", "3. Encurtar a redação", "4. Aumentar a dificuldade de compreensão"],
+        "question": "O que se entende por detalhamento na proposta de intervenção?",
+        "options": ["1. Descrever a estrutura do texto", "2. Especificar as ações a serem tomadas", "3. Introduzir a tese", "4. Apresentar dados"],
+        "answer": 2
+    },
+    {
+        "question": "Por que a proposta de intervenção deve ser articulada com os argumentos?",
+        "options": ["1. Para ampliar o desenvolvimento", "2. Para sustentar a tese com dados", "3. Para oferecer soluções conectadas aos problemas", "4. Para criticar o texto"],
+        "answer": 3
+    },
+    {
+        "question": "Em qual parte da redação a proposta de intervenção é inserida?",
+        "options": ["1. Na introdução", "2. No desenvolvimento", "3. Na conclusão", "4. Em qualquer parágrafo"],
+        "answer": 3
+    },
+    {
+        "question": "Quais elementos devem constar em uma proposta de intervenção?",
+        "options": ["1. Agente, ação, detalhamento, meio, e finalidade", "2. Tese, argumentos, exemplo", "3. Introdução, desenvolvimento e conclusão", "4. Narrador, personagem e enredo"],
         "answer": 1
     },
     {
-        "question": "Como uma boa conclusão impacta o leitor?",
-        "options": ["1. Reafirma a posição do autor", "2. Adiciona novas ideias", "3. Introduz novos argumentos", "4. Diminui o impacto do texto"],
+        "question": "Qual é a finalidade na proposta de intervenção?",
+        "options": ["1. Reforçar a conclusão", "2. Apontar o problema", "3. Indicar o objetivo final da ação", "4. Introduzir o agente"],
+        "answer": 3
+    },
+    {
+        "question": "Em que situação a proposta de intervenção pode ser penalizada?",
+        "options": ["1. Quando está clara e viável", "2. Quando está incompleta ou incoerente", "3. Quando é detalhada", "4. Quando inclui dados e citações"],
+        "answer": 2
+    },
+    {
+        "question": "A proposta de intervenção é um elemento obrigatório na redação do ENEM?",
+        "options": ["1. Sim, é obrigatória", "2. Não, é opcional", "3. Apenas se o tema for social", "4. Apenas se o tema for cultural"],
         "answer": 1
     }
 ]
 
 # Função para atualizar o ranking
-def atualizar_ranking(pontos):
+def atualizar_ranking(nome_jogador, pontos):
     try:
         with open('ranking.json', 'r') as file:
             ranking = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         ranking = []
 
-    nome_jogador = input("Digite seu nome para registrar no ranking: ")
+    # Adiciona a pontuação do jogador ao ranking
     ranking.append({"nome": nome_jogador, "pontos": pontos})
 
     with open('ranking.json', 'w') as file:
@@ -78,7 +95,7 @@ def iniciar_nivel3():
 
     # Configuração da janela
     tela_nivel3 = tk.Tk()
-    tela_nivel3.title("Nível 3 - Argumentação Avançada")
+    tela_nivel3.title("Nível 3 - Proposta de Intervenção")
     tela_nivel3.geometry("500x500")
 
     # Exibir visor de pontos
@@ -87,6 +104,10 @@ def iniciar_nivel3():
 
     # Variável para controlar a pergunta atual
     pergunta_atual = 0
+
+    # Função para atualizar o visor de pontos
+    def update_score():
+        score_label.config(text=f"Pontos: {pontos}")
 
     # Função para mostrar a próxima pergunta
     def show_question():
@@ -112,8 +133,8 @@ def iniciar_nivel3():
         nonlocal pergunta_atual
         global pontos
         if selected_answer == correct_answer:
-            pontos += 30  # Acrescentar 30 pontos para resposta correta
-            score_label.config(text=f"Pontos: {pontos}")  # Atualiza o visor de pontos
+            pontos += 30  # Acrescentar pontos para resposta correta
+            update_score()  # Atualiza o visor de pontos
 
         pergunta_atual += 1
         show_question()  # Avança para a próxima pergunta diretamente
@@ -128,7 +149,7 @@ def iniciar_nivel3():
         btn.pack(pady=5)
 
     # Botão para iniciar perguntas do Nível 3
-    start_button = tk.Button(tela_nivel3, text="Iniciar Perguntas do Nível 3", command=show_question)
+    start_button = tk.Button(tela_nivel3, text="Iniciar Perguntas do Nível 3", command=lambda: [show_question(), start_button.config(state="disabled")])
     start_button.pack(pady=20)
 
     # Botão "Voltar" para retornar ao módulo
@@ -141,9 +162,19 @@ def iniciar_nivel3():
     botao_voltar.pack(side=tk.BOTTOM, pady=20)
 
     def finalizar_nivel():
-        messagebox.showinfo("Nível 3 Concluído", f"Você finalizou o Nível 3 com {pontos} pontos!")
-        atualizar_ranking(pontos)  # Atualizar ranking com a pontuação final
-        tela_nivel3.destroy()
+        global pontos
+        nome_jogador = simpledialog.askstring("Registro no Ranking", "Digite seu nome para registrar no ranking:")
+        if nome_jogador:
+            messagebox.showinfo("Nível 3 Concluído", f"Você finalizou o Nível 3 com {pontos} pontos!")
+            atualizar_ranking(nome_jogador, pontos)  # Atualizar ranking com a pontuação final
+
+            # Aqui chamamos a tela de ranking
+            tela_nivel3.destroy()
+            import ranking  # Importa a tela de ranking
+            ranking.exibir_ranking()  # Chama a função para exibir o ranking
+        else:
+            messagebox.showwarning("Nível 3 Concluído", "Nome não registrado no ranking.")
+            tela_nivel3.destroy()  # Fechar a tela do nível mesmo que não tenha registrado o nome
 
     tela_nivel3.mainloop()
 
