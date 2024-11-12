@@ -4,7 +4,8 @@ def iniciar_regras():
     tela_regras = tk.Tk()
     tela_regras.title("The Writing Board - Regras")
     tela_regras.geometry("500x500")
-    tela_regras.minsize(300, 400)  # Tamanho mínimo da janela
+    tela_regras.configure(bg="#2d3e50")  # Cor de fundo alterada para #2d3e50
+    tela_regras.minsize(300, 400)
 
     # Texto das regras com pontuações específicas
     regras_texto = """
@@ -22,17 +23,39 @@ Pontuações por Nível:
 Boa sorte e lembre-se: pratique sua escrita e análise!
 """
 
-    # Usar um Label com wraplength para quebra de linha
-    label_regras = tk.Label(tela_regras, text=regras_texto, font=("Arial", 12), wraplength=450, justify="left")
-    label_regras.pack(pady=20, padx=10, fill=tk.BOTH, expand=True)  # Adicionando preenchimento e expansão
+    # Label das regras estilizada
+    label_regras = tk.Label(
+        tela_regras,
+        text=regras_texto,
+        font=("Arial", 12),
+        wraplength=450,
+        justify="left",
+        bg="#2d3e50",  # Cor de fundo do label igual ao fundo da janela
+        fg="#fbd11b"   # Cor do texto em amarelo claro
+    )
+    label_regras.pack(pady=20, padx=10, fill=tk.BOTH, expand=True)
 
-    # Botão "Voltar" para retornar à tela anterior (interface.py)
+    # Função para voltar à interface principal
     def voltar_interface():
         tela_regras.destroy()
         import interface
         interface.iniciar_interface()
 
-    botao_voltar = tk.Button(tela_regras, text="Voltar", command=voltar_interface)
+    # Botão "Voltar" com estilo
+    botao_voltar = tk.Button(
+        tela_regras,
+        text="Voltar",
+        command=voltar_interface,
+        font=("Arial", 10, "bold"),
+        bg="#fbd11b",     # Cor do botão em amarelo claro
+        fg="#2d3e50",     # Cor do texto em roxo escuro
+        activebackground="#fbd11b",  # Mantém a cor ao clicar
+        activeforeground="#2d3e50", # Cor do texto ao clicar
+        relief="raised",
+        cursor="hand2",
+        padx=10,
+        pady=5
+    )
     botao_voltar.pack(side=tk.BOTTOM, pady=20)
 
     tela_regras.mainloop()

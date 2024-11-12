@@ -1,10 +1,7 @@
-import sys
+import tkinter as tk
+from tkinter import messagebox
 import json
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFrame, QDialog
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QFont
 
-# Funções para carregar e salvar usuários
 def carregar_usuarios():
     try:
         with open("usuarios.json", "r") as f:
@@ -19,159 +16,80 @@ def salvar_usuarios():
 usuarios = carregar_usuarios()
 
 def cadastrar_usuario():
-    nome = entrada_nome.text()
-    senha = entrada_senha.text()
-
+    nome = entrada_nome.get()
+    senha = entrada_senha.get()
+    
     if len(nome) < 1:
-        show_error("Por favor, insira um nome.")
+        messagebox.showerror("Erro", "Por favor, insira um nome.")
     elif len(senha) < 4:
-        show_error("A senha deve ter pelo menos 4 caracteres.")
+        messagebox.showerror("Erro", "A senha deve ter pelo menos 4 caracteres.")
     elif nome in usuarios:
-        show_error("Esse nome já está cadastrado.")
+        messagebox.showerror("Erro", "Esse nome já está cadastrado.")
     else:
         usuarios[nome] = senha
         salvar_usuarios()
-        show_success("Cadastro realizado com sucesso!")
-        entrada_nome.clear()
-        entrada_senha.clear()
+        messagebox.showinfo("Sucesso", "Cadastro realizado com sucesso!")
+        entrada_nome.delete(0, tk.END)
+        entrada_senha.delete(0, tk.END)
 
 def realizar_login():
-    nome = entrada_login_nome.text()
-    senha = entrada_login_senha.text()
-
+    nome = entrada_login_nome.get()
+    senha = entrada_login_senha.get()
+    
     if nome in usuarios and usuarios[nome] == senha:
-        show_success(f"Bem-vindo, {nome}!")
-        login_window.hide()  # Oculta a janela de login
+        messagebox.showinfo("Sucesso", f"Bem-vindo, {nome}!")
+        tela_login.destroy()
         abrir_interface(nome)
     else:
-        show_error("Nome ou senha incorretos.")
-
-def show_error(message):
-    error_dialog = QDialog()
-    error_dialog.setWindowTitle("Erro")
-    error_label = QLabel(message)
-    error_label.setAlignment(Qt.AlignCenter)
-    layout = QVBoxLayout()
-    layout.addWidget(error_label)
-    error_dialog.setLayout(layout)
-    error_dialog.exec_()
-
-def show_success(message):
-    success_dialog = QDialog()
-    success_dialog.setWindowTitle("Sucesso")
-    success_label = QLabel(message)
-    success_label.setAlignment(Qt.AlignCenter)
-    layout = QVBoxLayout()
-    layout.addWidget(success_label)
-    success_dialog.setLayout(layout)
-    success_dialog.exec_()
+        messagebox.showerror("Erro", "Nome ou senha incorretos.")
 
 def abrir_interface(nome):
-    interface_window = QWidget()
-    interface_window.setWindowTitle(f"Bem-vindo, {nome}!")
-    interface_window.setGeometry(100, 100, 600, 600)
-    interface_layout = QVBoxLayout()
-
-    # Adicionar mais elementos da interface principal aqui
-    welcome_label = QLabel(f"Seja bem-vindo, {nome}!")
-    interface_layout.addWidget(welcome_label)
-
-    botao_logout = QPushButton("Sair")
-    botao_logout.setStyleSheet("background-color: #7289DA; color: white; border-radius: 8px; padding: 12px; font-size: 18px;")
-    botao_logout.clicked.connect(lambda: sair(interface_window))
-    interface_layout.addWidget(botao_logout)
-
-    interface_window.setLayout(interface_layout)
-    interface_window.show()
-
-def sair(window):
-    window.close()
-    login_window.show()  # Mostra a janela de login novamente
+    import interface  # Certifique-se de que o módulo interface.py existe
+    interface.iniciar_interface(nome)
 
 def tela_login():
-    global entrada_nome, entrada_senha, entrada_login_nome, entrada_login_senha, login_window
+    global entrada_nome, entrada_senha, entrada_login_nome, entrada_login_senha
+    global tela_login
+    tela_login = tk.Tk()
+    tela_login.title("The Writing Board - Tela de Login")
+    tela_login.geometry("500x500")
+    tela_login.configure(bg="#222831")  # Cor de fundo da tela
 
-    app = QApplication(sys.argv)
-    login_window = QWidget()
-    login_window.setWindowTitle("The Writing Board - Tela de Login")
-    login_window.setGeometry(100, 100, 600, 600)  # Tamanho fixo para todas as telas
-    login_window.setStyleSheet("background-color: #2C2F33; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;")
-
-    # Definir uma fonte mais sofisticada
-    font = QFont("Segoe UI", 12)
-    app.setFont(font)
-
-    # Layout principal
-    layout = QVBoxLayout()
-
-    # Título
-    titulo = QLabel("Bem-vindo, jogador!")
-    titulo.setAlignment(Qt.AlignCenter)
-    titulo.setStyleSheet("font-size: 28px; font-weight: bold; color: #7289DA;")
-    layout.addWidget(titulo)
+    # Título da tela de login
+    titulo = tk.Label(tela_login, text="Bem-vindo, jogador!", font=("Arial", 18, "bold"), fg="#ffd369", bg="#222831")
+    titulo.pack(pady=20)
 
     # Seção de Cadastro
-    secao_cadastro = QFrame()
-    secao_cadastro.setFrameShape(QFrame.StyledPanel)
-    secao_cadastro.setStyleSheet("background-color: #23272A; border-radius: 10px; padding: 20px;")
-    
-    cadastro_layout = QVBoxLayout()
-    cadastro_titulo = QLabel("Cadastro")
-    cadastro_titulo.setStyleSheet("font-size: 20px; color: #7289DA; font-weight: bold;")
-    cadastro_layout.addWidget(cadastro_titulo)
+    secao_cadastro = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=20, pady=20)
+    secao_cadastro.pack(fill="both", expand=True, padx=20, pady=10)
 
-    cadastro_layout.addWidget(QLabel("Nome:"))
-    entrada_nome = QLineEdit()
-    entrada_nome.setStyleSheet("background-color: #99AAB5; border-radius: 8px; padding: 10px; font-size: 16px;")
-    cadastro_layout.addWidget(entrada_nome)
+    tk.Label(secao_cadastro, text="Nome:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=0, column=0, sticky="e", padx=5, pady=5)
+    entrada_nome = tk.Entry(secao_cadastro, width=30, font=("Arial", 12))
+    entrada_nome.grid(row=0, column=1, padx=5, pady=5)
 
-    cadastro_layout.addWidget(QLabel("Senha:"))
-    entrada_senha = QLineEdit()
-    entrada_senha.setStyleSheet("background-color: #99AAB5; border-radius: 8px; padding: 10px; font-size: 16px;")
-    entrada_senha.setEchoMode(QLineEdit.Password)
-    cadastro_layout.addWidget(entrada_senha)
+    tk.Label(secao_cadastro, text="Senha:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+    entrada_senha = tk.Entry(secao_cadastro, show="*", width=30, font=("Arial", 12))
+    entrada_senha.grid(row=1, column=1, padx=5, pady=5)
 
-    botao_cadastrar = QPushButton("Cadastrar")
-    botao_cadastrar.setStyleSheet("background-color: #7289DA; color: white; border-radius: 8px; padding: 12px; font-size: 18px;")
-    botao_cadastrar.clicked.connect(cadastrar_usuario)
-    cadastro_layout.addWidget(botao_cadastrar)
-
-    secao_cadastro.setLayout(cadastro_layout)
-    layout.addWidget(secao_cadastro)
+    botao_cadastrar = tk.Button(secao_cadastro, text="Cadastrar", font=("Arial", 14, "bold"), bg="#fbd11b", fg="#222831", relief="raised", bd=4, width=20, height=2, command=cadastrar_usuario)
+    botao_cadastrar.grid(row=2, column=0, columnspan=2, pady=10)
 
     # Seção de Login
-    secao_login = QFrame()
-    secao_login.setFrameShape(QFrame.StyledPanel)
-    secao_login.setStyleSheet("background-color: #23272A; border-radius: 10px; padding: 20px;")
-    
-    login_layout = QVBoxLayout()
-    login_titulo = QLabel("Login")
-    login_titulo.setStyleSheet("font-size: 20px; color: #7289DA; font-weight: bold;")
-    login_layout.addWidget(login_titulo)
+    secao_login = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=20, pady=20)
+    secao_login.pack(fill="both", expand=True, padx=20, pady=10)
 
-    login_layout.addWidget(QLabel("Nome:"))
-    entrada_login_nome = QLineEdit()
-    entrada_login_nome.setStyleSheet("background-color: #99AAB5; border-radius: 8px; padding: 10px; font-size: 16px;")
-    login_layout.addWidget(entrada_login_nome)
+    tk.Label(secao_login, text="Nome:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=0, column=0, sticky="e", padx=5, pady=5)
+    entrada_login_nome = tk.Entry(secao_login, width=30, font=("Arial", 12))
+    entrada_login_nome.grid(row=0, column=1, padx=5, pady=5)
 
-    login_layout.addWidget(QLabel("Senha:"))
-    entrada_login_senha = QLineEdit()
-    entrada_login_senha.setStyleSheet("background-color: #99AAB5; border-radius: 8px; padding: 10px; font-size: 16px;")
-    entrada_login_senha.setEchoMode(QLineEdit.Password)
-    login_layout.addWidget(entrada_login_senha)
+    tk.Label(secao_login, text="Senha:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+    entrada_login_senha = tk.Entry(secao_login, show="*", width=30, font=("Arial", 12))
+    entrada_login_senha.grid(row=1, column=1, padx=5, pady=5)
 
-    botao_login = QPushButton("Login")
-    botao_login.setStyleSheet("background-color: #7289DA; color: white; border-radius: 8px; padding: 12px; font-size: 18px;")
-    botao_login.clicked.connect(realizar_login)
-    login_layout.addWidget(botao_login)
+    botao_login = tk.Button(secao_login, text="Login", font=("Arial", 14, "bold"), bg="#fbd11b", fg="#222831", relief="raised", bd=4, width=20, height=2, command=realizar_login)
+    botao_login.grid(row=2, column=0, columnspan=2, pady=10)
 
-    secao_login.setLayout(login_layout)
-    layout.addWidget(secao_login)
-
-    login_window.setLayout(layout)
-    login_window.show()
-
-    sys.exit(app.exec_())
+    tela_login.mainloop()
 
 if __name__ == "__main__":
     tela_login()

@@ -2,60 +2,63 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
 
-# Configuração inicial da pontuação e lista de perguntas do Nível 2
+
+# Configuração inicial da pontuação e lista de perguntas para o Nível 2
 pontos = 0
 questions_nivel2 = [
     {
-        "question": "O que é repertório sociocultural em um texto dissertativo?",
-        "options": ["1. Uma opinião pessoal", "2. Informações sem fontes", "3. Argumento baseado em dados", "4. Ideia fora do contexto"],
+        "question": "O que é uma tese em um texto dissertativo?",
+        "options": ["1. Um exemplo", "2. Uma citação", "3. A principal ideia do autor", "4. Um argumento secundário"],
         "answer": 3
     },
     {
-        "question": "Como o repertório pode fortalecer a argumentação?",
-        "options": ["1. Desviando o tema", "2. Aumentando a empatia", "3. Conectando com dados confiáveis", "4. Contrariando a tese"],
+        "question": "Para que serve o parágrafo de introdução?",
+        "options": ["1. Apresentar a conclusão", "2. Apresentar a tese", "3. Fornecer argumentos", "4. Criticar a tese"],
+        "answer": 2
+    },
+    {
+        "question": "Qual a função dos argumentos em um texto dissertativo?",
+        "options": ["1. Apresentar dados", "2. Defender a tese", "3. Fornecer exemplos", "4. Contradizer a tese"],
+        "answer": 2
+    },
+    {
+        "question": "Qual é o objetivo da conclusão de um texto dissertativo?",
+        "options": ["1. Introduzir novas ideias", "2. Resumir os argumentos", "3. Criticar a tese", "4. Apresentar a tese"],
+        "answer": 2
+    },
+    {
+        "question": "O que caracteriza uma introdução eficiente?",
+        "options": ["1. Ser longa", "2. Ser vaga", "3. Contextualizar a tese", "4. Repetir a conclusão"],
         "answer": 3
     },
     {
-        "question": "Qual das opções a seguir é uma fonte de repertório sociocultural?",
-        "options": ["1. Uma pesquisa científica", "2. Um boato", "3. Um meme", "4. Uma opinião sem fonte"],
-        "answer": 1
-    },
-    {
-        "question": "Como o repertório pode contribuir para a construção da proposta de intervenção?",
-        "options": ["1. Introduzindo uma nova tese", "2. Validando soluções", "3. Desviando o foco", "4. Confundindo o leitor"],
-        "answer": 2
-    },
-    {
-        "question": "Citar uma lei em um texto dissertativo é um exemplo de:",
-        "options": ["1. Opinião pessoal", "2. Repertório sociocultural", "3. Introdução", "4. Conclusão"],
-        "answer": 2
-    },
-    {
-        "question": "Qual dessas afirmações é um exemplo de repertório sociocultural adequado?",
-        "options": ["1. Ouvi dizer que é assim", "2. Estatísticas do IBGE", "3. Algo que todos sabem", "4. Opinião do autor"],
-        "answer": 2
-    },
-    {
-        "question": "Qual das alternativas é considerada uma evidência confiável em uma dissertação?",
-        "options": ["1. Fatos históricos", "2. Rumores", "3. Suposições", "4. Experiência pessoal"],
-        "answer": 1
-    },
-    {
-        "question": "O que NÃO é um exemplo de repertório sociocultural?",
-        "options": ["1. Referência à Constituição", "2. Pesquisa de uma universidade", "3. Opinião pessoal", "4. Dado do IBGE"],
+        "question": "Como um argumento deve ser estruturado?",
+        "options": ["1. Baseado em opinião", "2. Sem dados", "3. De forma lógica e fundamentada", "4. Sem relação com a tese"],
         "answer": 3
     },
     {
-        "question": "Ao usar uma citação, o autor está empregando qual recurso argumentativo?",
-        "options": ["1. Argumento de autoridade", "2. Contra-argumento", "3. Exemplo pessoal", "4. Opinião"],
-        "answer": 1
-    },
-    {
-        "question": "Qual das alternativas abaixo é uma boa prática ao usar repertório sociocultural?",
-        "options": ["1. Inventar dados", "2. Usar fontes confiáveis", "3. Evitar referências", "4. Usar apenas a opinião"],
+        "question": "O que significa ser objetivo em um texto?",
+        "options": ["1. Usar opiniões pessoais", "2. Usar dados e fatos", "3. Fazer perguntas", "4. Usar linguagem poética"],
         "answer": 2
     },
+    {
+        "question": "Qual o papel dos conectivos em um texto?",
+        "options": ["1. Separar ideias", "2. Conectar parágrafos", "3. Dar opinião", "4. Enfeitar o texto"],
+        "answer": 2
+    },
+    {
+        "question": "Como um texto deve ser concluído?",
+        "options": ["1. Apresentando novas ideias", "2. Resumindo e reforçando a tese", "3. Com perguntas", "4. Com citações"],
+        "answer": 2
+    },
+    {
+        "question": "Qual é a importância de um bom vocabulário?",
+        "options": ["1. Enfeitar o texto", "2. Tornar a leitura complexa", "3. Comunicar de forma clara", "4. Apresentar opiniões"],
+        "answer": 3
+    },
+    # Adicione outras perguntas aqui, mantendo o formato e sem repetir nenhuma
 ]
+
 
 # Função para atualizar o ranking
 def atualizar_ranking(nome_jogador, pontos):
@@ -65,32 +68,79 @@ def atualizar_ranking(nome_jogador, pontos):
     except (FileNotFoundError, json.JSONDecodeError):
         ranking = []
 
-    # Adiciona a pontuação do jogador ao ranking
+
     ranking.append({"nome": nome_jogador, "pontos": pontos})
+
 
     with open('ranking.json', 'w') as file:
         json.dump(ranking, file)
+
 
 # Função para iniciar o Nível 2
 def iniciar_nivel2():
     global pontos
     pontos = 0  # Resetar pontos no início do nível
 
+
     # Configuração da janela
     tela_nivel2 = tk.Tk()
-    tela_nivel2.title("Nível 2 - Repertório Sociocultural")
-    tela_nivel2.geometry("500x500")
+    tela_nivel2.title("Nível 2 - Noções Avançadas de Estrutura Textual")
+    tela_nivel2.geometry("600x600")
+    tela_nivel2.configure(bg="#2d3e50")  # Cor de fundo azul-escuro
 
-    # Exibir visor de pontos
-    score_label = tk.Label(tela_nivel2, text=f"Pontos: {pontos}", font=("Arial", 16))
+
+    # Tela de introdução
+    introducao_frame = tk.Frame(tela_nivel2, bg="#2d3e50")
+    introducao_frame.pack(fill="both", expand=True)
+
+
+    introducao_label = tk.Label(
+        introducao_frame,
+        text="Bem-vindo ao Nível 2: Noções Avançadas de Estrutura Textual!\n\nVocê responderá perguntas mais desafiadoras sobre estrutura de textos dissertativos.\nA cada resposta correta, você ganhará pontos!\n\nBoa sorte!",
+        font=("Arial", 14),
+        bg="#2d3e50",
+        fg="#f9d342",
+        wraplength=500,
+        justify="center"
+    )
+    introducao_label.pack(pady=40)
+
+
+    # Botão para começar o nível após a introdução
+    def iniciar_jogo():
+        introducao_frame.pack_forget()  # Esconde o frame de introdução
+        jogo_frame.pack(fill="both", expand=True)  # Mostra o frame de perguntas
+        show_question()
+
+
+    start_button = tk.Button(
+        introducao_frame,
+        text="Iniciar Nível 2",
+        command=iniciar_jogo,
+        font=("Arial", 12, "bold"),
+        bg="#f9d342",
+        fg="#2d3e50",
+        cursor="hand2",
+        relief="groove"
+    )
+    start_button.pack(pady=20)
+
+
+    # Frame para o jogo (perguntas)
+    jogo_frame = tk.Frame(tela_nivel2, bg="#2d3e50")
+
+
+    # Exibir visor de pontos com design aprimorado
+    score_label = tk.Label(jogo_frame, text=f"Pontos: {pontos}", font=("Arial", 16, "bold"), bg="#2d3e50", fg="#f9d342")
     score_label.pack(pady=10)
 
-    # Variável para controlar a pergunta atual
+
     pergunta_atual = 0
 
-    # Função para atualizar o visor de pontos
+
     def update_score():
         score_label.config(text=f"Pontos: {pontos}")
+
 
     # Função para mostrar a próxima pergunta
     def show_question():
@@ -101,39 +151,51 @@ def iniciar_nivel2():
             options = question["options"]
             answer = question["answer"]
 
+
             question_label.config(text=question_text)
 
-            # Atualizar as opções
+
+            # Atualizar as opções em 2x2
             for i, option in enumerate(options):
                 option_buttons[i].config(text=option, command=lambda ans=i+1: check_answer(ans, answer))
-
         else:
-            # Final do nível e pontuação total
             finalizar_nivel()
+
 
     # Verificar resposta e atualizar pontuação
     def check_answer(selected_answer, correct_answer):
         nonlocal pergunta_atual
         global pontos
         if selected_answer == correct_answer:
-            pontos += 10  # Acrescentar 10 pontos para resposta correta
-            update_score()  # Atualiza o visor de pontos
-
+            pontos += 5
+            update_score()
         pergunta_atual += 1
-        show_question()  # Avança para a próxima pergunta diretamente
+        show_question()
+
 
     # Layout da pergunta
-    question_label = tk.Label(tela_nivel2, text="", wraplength=400, font=("Arial", 12))
+    question_label = tk.Label(jogo_frame, text="", wraplength=500, font=("Arial", 14, "bold"), bg="#2d3e50", fg="#f9d342")
     question_label.pack(pady=20)
 
-    # Botões para opções
-    option_buttons = [tk.Button(tela_nivel2, text="", font=("Arial", 12)) for _ in range(4)]
-    for btn in option_buttons:
-        btn.pack(pady=5)
 
-    # Botão para iniciar perguntas do Nível 2
-    start_button = tk.Button(tela_nivel2, text="Iniciar Perguntas do Nível 2", command=lambda: [show_question(), start_button.config(state="disabled")])
-    start_button.pack(pady=20)
+    # Frame para botões de opções com layout 2x2
+    options_frame = tk.Frame(jogo_frame, bg="#2d3e50")
+    options_frame.pack(pady=20)
+
+
+    # Botões para opções com design aprimorado
+    option_buttons = []
+    for i in range(4):
+        btn = tk.Button(options_frame, text="", font=("Arial", 12), width=20, height=2, bg="#5c80bc", fg="white", relief="raised", activebackground="#4a6fa5", cursor="hand2")
+        option_buttons.append(btn)
+
+
+    # Organizando botões em 2x2
+    option_buttons[0].grid(row=0, column=0, padx=10, pady=5)
+    option_buttons[1].grid(row=0, column=1, padx=10, pady=5)
+    option_buttons[2].grid(row=1, column=0, padx=10, pady=5)
+    option_buttons[3].grid(row=1, column=1, padx=10, pady=5)
+
 
     # Botão "Voltar" para retornar ao módulo
     def voltar_modulos():
@@ -141,25 +203,15 @@ def iniciar_nivel2():
         import modulos
         modulos.iniciar_modulos()
 
-    botao_voltar = tk.Button(tela_nivel2, text="Voltar", command=voltar_modulos)
+
+    botao_voltar = tk.Button(jogo_frame, text="Voltar", command=voltar_modulos, font=("Arial", 12, "bold"), bg="#f9d342", fg="#2d3e50", relief="flat", cursor="hand2")
     botao_voltar.pack(side=tk.BOTTOM, pady=20)
 
+
+    # Função para finalizar o nível
     def finalizar_nivel():
         global pontos
         nome_jogador = simpledialog.askstring("Registro no Ranking", "Digite seu nome para registrar no ranking:")
         if nome_jogador:
             messagebox.showinfo("Nível 2 Concluído", f"Você finalizou o Nível 2 com {pontos} pontos!")
-            atualizar_ranking(nome_jogador, pontos)  # Atualizar ranking com a pontuação final
-
-            # Aqui chamamos a tela de ranking
-            tela_nivel2.destroy()
-            import ranking  # Importa a tela de ranking
-            ranking.exibir_ranking()  # Chama a função para exibir o ranking
-        else:
-            messagebox.showwarning("Nível 2 Concluído", "Nome não registrado no ranking.")
-            tela_nivel2.destroy()  # Fechar a tela do nível mesmo que não tenha registrado o nome
-
-    tela_nivel2.mainloop()
-
-if __name__ == "__main__":
-    iniciar_nivel2()
+            atualizar_r
