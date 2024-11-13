@@ -20,21 +20,24 @@ def iniciar_modulos():
     botoes_frame = tk.Frame(tela_modulos, bg="#2d3e50")
     botoes_frame.pack(pady=40)
 
+    # Definindo nome_usuario fixo (ou pode vir de outra tela)
+    nome_usuario = "Usuário Teste"  # Substitua conforme necessário
+
     # Funções para redirecionamento de cada nível
-    def nivel_1():
-        tela_modulos.destroy()
-        import nivel1
-        nivel1.iniciar_nivel1()
+    def abrir_nivel1():
+        tela_modulos.destroy()  # Fecha a tela atual
+        import nivel1  # Importa o arquivo nivel1.py
+        nivel1.iniciar_nivel1(nome_usuario)  # Passa nome_usuario como argumento
 
-    def nivel_2():
-        tela_modulos.destroy()
-        import nivel2
-        nivel2.iniciar_nivel2()
+    def abrir_nivel2():
+        tela_modulos.destroy()  # Fecha a tela atual
+        import nivel2  # Importa o arquivo nivel2.py
+        nivel2.iniciar_nivel2(nome_usuario)  # Passa nome_usuario como argumento
 
-    def nivel_3():
-        tela_modulos.destroy()
-        import nivel3
-        nivel3.iniciar_nivel3()  # Não fecha a tela de módulos
+    def abrir_nivel3():
+        tela_modulos.destroy()  # Fecha a tela atual
+        import nivel3  # Importa o arquivo nivel3.py
+        nivel3.iniciar_nivel3(nome_usuario)  # Passa nome_usuario como argumento
 
     # Botões de seleção de nível com proporções e estilo aprimorados
     botao_nivel_1 = tk.Button(
@@ -42,7 +45,7 @@ def iniciar_modulos():
         text="Nível 1", 
         width=15, 
         height=2, 
-        command=nivel_1, 
+        command=abrir_nivel1, 
         font=("Arial", 12, "bold"), 
         bg="#5c80bc", 
         fg="white", 
@@ -57,7 +60,7 @@ def iniciar_modulos():
         text="Nível 2", 
         width=15, 
         height=2, 
-        command=nivel_2, 
+        command=abrir_nivel2, 
         font=("Arial", 12, "bold"), 
         bg="#5c80bc", 
         fg="white", 
@@ -72,7 +75,7 @@ def iniciar_modulos():
         text="Nível 3", 
         width=15, 
         height=2, 
-        command=nivel_3, 
+        command=abrir_nivel3, 
         font=("Arial", 12, "bold"), 
         bg="#5c80bc", 
         fg="white", 
@@ -82,7 +85,7 @@ def iniciar_modulos():
     )
     botao_nivel_3.grid(row=0, column=2, padx=15, pady=15)
 
-    # Botão "Voltar" para retornar à tela anterior (interface.py) com design aprimorado
+    # Botão "Voltar" para retornar à tela anterior (interface.py)
     def voltar_interface():
         tela_modulos.destroy()
         import interface

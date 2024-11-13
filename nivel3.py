@@ -1,152 +1,127 @@
 import tkinter as tk
-from tkinter import messagebox, simpledialog
 import json
 
-# Configuração inicial da pontuação e lista de perguntas para o Nível 3
-pontos = 0
-questions_nivel3 = [
-    {
-        "question": "O que é uma tese em um texto dissertativo?",
-        "options": ["1. Um exemplo", "2. Uma citação", "3. A principal ideia do autor", "4. Um argumento secundário"],
-        "answer": 3
-    },
-    # Adicione as demais perguntas específicas do nível 3 aqui
-]
-
-# Função para atualizar o ranking
-def atualizar_ranking(nome_jogador, pontos):
+def salvar_pontuacao(nivel, pontuacao, usuario):
     try:
-        with open('ranking.json', 'r') as file:
-            ranking = json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        ranking = []
+        with open("pontuacoes.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        dados = {}
 
-    ranking.append({"nome": nome_jogador, "pontos": pontos})
+    if nivel not in dados:
+        dados[nivel] = []
+    dados[nivel].append({"usuario": usuario, "pontuacao": pontuacao})
 
-    with open('ranking.json', 'w') as file:
-        json.dump(ranking, file)
+    with open("pontuacoes.json", "w") as arquivo:
+        json.dump(dados, arquivo)
 
-# Função para iniciar o Nível 3
-def iniciar_nivel3():
-    global pontos
-    pontos = 0  # Resetar pontos no início do nível
-
-    # Configuração da janela
+def iniciar_nivel3(nome_usuario):
     tela_nivel3 = tk.Tk()
-    tela_nivel3.title("Nível 3 - Noções Avançadas de Estrutura Textual")
-    tela_nivel3.geometry("600x600")
-    tela_nivel3.configure(bg="#2d3e50")  # Cor de fundo azul-escuro
+    tela_nivel3.title("The Writing Board - Nível 3")
+    tela_nivel3.geometry("500x500")
+    tela_nivel3.configure(bg="#2d3e50")
 
-    # Tela de introdução
-    introducao_frame = tk.Frame(tela_nivel3, bg="#2d3e50")
-    introducao_frame.pack(fill="both", expand=True)
+    perguntas = [
+        {"pergunta": "O que caracteriza uma tese sofisticada em um texto dissertativo-argumentativo?", 
+         "opcoes": ["Apresenta uma opinião pessoal", "É genérica e aplicável a vários contextos", "É clara e complexa, abordando nuances", "Evita controvérsias"], 
+         "correta": 2},
+        {"pergunta": "Qual é o papel dos conectivos em parágrafos de argumentação complexa?", 
+         "opcoes": ["Introduzir novas ideias", "Estabelecer relações lógicas entre ideias", "Enfeitar o texto", "Aumentar o número de palavras"], 
+         "correta": 1},
+        {"pergunta": "Como a conclusão de um texto dissertativo deve ser estruturada para reforçar a tese?", 
+         "opcoes": ["Reafirma a tese e propõe uma reflexão final", "Introduz novos argumentos", "Repete a introdução", "Apresenta opiniões"], 
+         "correta": 0},
+        {"pergunta": "Qual é o benefício de usar dados e citações em uma redação argumentativa?", 
+         "opcoes": ["Evitar discussões", "Provar a veracidade da tese", "Fortalecer argumentos com autoridade", "Reduzir o texto"], 
+         "correta": 2},
+        {"pergunta": "O que define uma proposta de intervenção adequada em uma redação no estilo ENEM?", 
+         "opcoes": ["Sugere um novo tema", "Apresenta uma solução vaga", "É detalhada e respeita os direitos humanos", "Evita detalhamentos"], 
+         "correta": 2},
+        {"pergunta": "Como a coesão lexical contribui para a clareza do texto?", 
+         "opcoes": ["Evita repetições", "Diminui a precisão", "Torna o texto mais informal", "Exclui sinônimos"], 
+         "correta": 0},
+        {"pergunta": "Qual a importância de um repertório sociocultural em uma argumentação sólida?", 
+         "opcoes": ["Torna a tese mais complexa", "Comprova a opinião pessoal", "Enriquece os argumentos com contexto", "Simplifica o texto"], 
+         "correta": 2},
+        {"pergunta": "Por que é importante variar a estrutura das frases em uma redação dissertativa?", 
+         "opcoes": ["Para enfeitar o texto", "Para evitar monotonia e enriquecer o estilo", "Para manter a simplicidade", "Para garantir objetividade"], 
+         "correta": 1},
+        {"pergunta": "O que torna uma introdução impactante em uma redação dissertativa?", 
+         "opcoes": ["Começa com um exemplo direto", "É vaga e genérica", "Contextualiza o tema e antecipa a tese", "Evita informações contextuais"], 
+         "correta": 2},
+        {"pergunta": "Como uma análise crítica pode enriquecer um argumento?", 
+         "opcoes": ["Refuta a tese", "Adiciona complexidade e mostra diferentes perspectivas", "Simplifica o argumento", "Elimina detalhes"], 
+         "correta": 1},
+    ]
 
-    introducao_label = tk.Label(
-        introducao_frame,
-        text="Bem-vindo ao Nível 3: Noções Avançadas de Estrutura Textual!\n\nVocê responderá perguntas mais desafiadoras sobre estrutura de textos dissertativos.\nA cada resposta correta, você ganhará 30 pontos!\n\nBoa sorte!",
-        font=("Arial", 14),
-        bg="#2d3e50",
-        fg="#f9d342",
-        wraplength=500,
-        justify="center"
-    )
-    introducao_label.pack(pady=40)
+    pontuacao = 0
+    indice_pergunta = 0
 
-    # Botão para começar o nível após a introdução
-    def iniciar_jogo():
-        introducao_frame.pack_forget()  # Esconde o frame de introdução
-        jogo_frame.pack(fill="both", expand=True)  # Mostra o frame de perguntas
-        show_question()
-
-    start_button = tk.Button(
-        introducao_frame,
-        text="Iniciar Nível 3",
-        command=iniciar_jogo,
-        font=("Arial", 12, "bold"),
-        bg="#f9d342",
-        fg="#2d3e50",
-        cursor="hand2",
-        relief="groove"
-    )
-    start_button.pack(pady=20)
-
-    # Frame para o jogo (perguntas)
-    jogo_frame = tk.Frame(tela_nivel3, bg="#2d3e50")
-
-    # Exibir visor de pontos com design aprimorado
-    score_label = tk.Label(jogo_frame, text=f"Pontos: {pontos}", font=("Arial", 16, "bold"), bg="#2d3e50", fg="#f9d342")
-    score_label.pack(pady=10)
-
-    pergunta_atual = 0
-
-    def update_score():
-        score_label.config(text=f"Pontos: {pontos}")
-
-    # Função para mostrar a próxima pergunta
-    def show_question():
-        nonlocal pergunta_atual
-        if pergunta_atual < len(questions_nivel3):
-            question = questions_nivel3[pergunta_atual]
-            question_text = question["question"]
-            options = question["options"]
-            answer = question["answer"]
-
-            question_label.config(text=question_text)
-
-            # Atualizar as opções em 2x2
-            for i, option in enumerate(options):
-                option_buttons[i].config(text=option, command=lambda ans=i+1: check_answer(ans, answer))
+    def exibir_pergunta():
+        nonlocal indice_pergunta
+        if indice_pergunta < len(perguntas):
+            pergunta = perguntas[indice_pergunta]
+            label_pergunta.config(text=pergunta["pergunta"])
+            for i, opcao in enumerate(opcoes_botoes):
+                opcao.config(text=pergunta["opcoes"][i])
         else:
-            finalizar_nivel()
+            finalizar_quiz()
 
-    # Verificar resposta e atualizar pontuação
-    def check_answer(selected_answer, correct_answer):
-        nonlocal pergunta_atual
-        global pontos
-        if selected_answer == correct_answer:
-            pontos += 30
-            update_score()
-        pergunta_atual += 1
-        show_question()
+    def verificar_resposta(indice_opcao):
+        nonlocal pontuacao, indice_pergunta
+        if indice_opcao == perguntas[indice_pergunta]["correta"]:
+            pontuacao += 30
+            label_pontuacao.config(text=f"Pontuação: {pontuacao}")
+        indice_pergunta += 1
+        exibir_pergunta()
 
-    # Layout da pergunta
-    question_label = tk.Label(jogo_frame, text="", wraplength=500, font=("Arial", 14, "bold"), bg="#2d3e50", fg="#f9d342")
-    question_label.pack(pady=20)
-
-    # Frame para botões de opções com layout 2x2
-    options_frame = tk.Frame(jogo_frame, bg="#2d3e50")
-    options_frame.pack(pady=20)
-
-    # Botões para opções com design aprimorado
-    option_buttons = []
-    for i in range(4):
-        btn = tk.Button(options_frame, text="", font=("Arial", 12), width=20, height=2, bg="#5c80bc", fg="white", relief="raised", activebackground="#4a6fa5", cursor="hand2")
-        option_buttons.append(btn)
-
-    # Organizando botões em 2x2
-    option_buttons[0].grid(row=0, column=0, padx=10, pady=5)
-    option_buttons[1].grid(row=0, column=1, padx=10, pady=5)
-    option_buttons[2].grid(row=1, column=0, padx=10, pady=5)
-    option_buttons[3].grid(row=1, column=1, padx=10, pady=5)
-
-    # Botão "Voltar" para retornar ao módulo
-    def voltar_modulos():
+    def finalizar_quiz():
+        salvar_pontuacao("nivel3", pontuacao, nome_usuario)
         tela_nivel3.destroy()
-        import modulos
-        modulos.iniciar_modulos()
+        iniciar_ranking(nome_usuario)
 
-    botao_voltar = tk.Button(jogo_frame, text="Voltar", command=voltar_modulos, font=("Arial", 12, "bold"), bg="#f9d342", fg="#2d3e50", relief="flat", cursor="hand2")
-    botao_voltar.pack(side=tk.BOTTOM, pady=20)
+    label_pergunta = tk.Label(tela_nivel3, text="", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b", wraplength=450, justify="center")
+    label_pergunta.pack(pady=20)
 
-    # Função para finalizar o nível
-    def finalizar_nivel():
-        global pontos
-        nome_jogador = simpledialog.askstring("Registro no Ranking", "Digite seu nome para registrar no ranking:")
-        if nome_jogador:
-            messagebox.showinfo("Nível 3 Concluído", f"Você finalizou o Nível 3 com {pontos} pontos!")
-            atualizar_ranking(nome_jogador, pontos)
+    # Visor de pontuação
+    label_pontuacao = tk.Label(tela_nivel3, text=f"Pontuação: {pontuacao}", font=("Arial", 12, "bold"), bg="#2d3e50", fg="#fbd11b")
+    label_pontuacao.pack(pady=10)
+
+    opcoes_botoes = []
+    for i in range(4):
+        botao = tk.Button(tela_nivel3, text="", command=lambda i=i: verificar_resposta(i), font=("Arial", 12, "bold"), bg="#fbd11b", fg="#2d3e50", activebackground="#fbd11b", activeforeground="#2d3e50", width=25, height=2, cursor="hand2")
+        botao.pack(pady=5)
+        opcoes_botoes.append(botao)
+
+    exibir_pergunta()
 
     tela_nivel3.mainloop()
 
-# Chamada para iniciar o nível 3
-iniciar_nivel3()
+def iniciar_ranking(nome_usuario):
+    tela_ranking = tk.Tk()
+    tela_ranking.title("Ranking")
+    tela_ranking.geometry("500x500")
+    tela_ranking.configure(bg="#2d3e50")
+
+    try:
+        with open("pontuacoes.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        dados = {}
+
+    ranking_texto = "Ranking\n\n"
+    for nivel, pontuacoes in dados.items():
+        ranking_texto += f"Nível {nivel}:\n"
+        for entry in pontuacoes:
+            ranking_texto += f"{entry['usuario']} - {entry['pontuacao']} pontos\n"
+
+    label_ranking = tk.Label(tela_ranking, text=ranking_texto, font=("Arial", 12), bg="#2d3e50", fg="#fbd11b", justify="left")
+    label_ranking.pack(pady=20)
+
+    voltar_button = tk.Button(tela_ranking, text="Voltar", command=tela_ranking.destroy, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+    voltar_button.pack(pady=10)
+
+    tela_ranking.mainloop()
+
+if __name__ == "__main__":
+    iniciar_nivel3("Usuário Exemplo")

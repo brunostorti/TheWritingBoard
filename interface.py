@@ -32,11 +32,11 @@ def iniciar_interface(nome="Usuário"):
         import regras
         regras.iniciar_regras()
 
-    # Função para redirecionar para a tela de ranking
+    # Função para redirecionar para a tela de ranking, passando o nome do usuário
     def abrir_ranking():
         tela_interface.destroy()
         import ranking
-        ranking.iniciar_ranking()
+        ranking.iniciar_ranking(nome)
 
     # Configuração de estilo para os botões com bordas arredondadas
     estilo_botao = {
