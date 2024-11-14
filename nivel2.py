@@ -1,5 +1,6 @@
 import tkinter as tk
 import json
+from modulos import iniciar_modulos  # Importa a função iniciar_modulos de modulos.py
 
 def salvar_pontuacao(nivel, pontuacao, usuario):
     try:
@@ -13,9 +14,10 @@ def salvar_pontuacao(nivel, pontuacao, usuario):
     dados[nivel].append({"usuario": usuario, "pontuacao": pontuacao})
 
     with open("pontuacoes.json", "w") as arquivo:
-        json.dump(dados, arquivo)
+        json.dump(dados, arquivo, indent=4)
 
-def iniciar_nivel2(nome_usuario):
+
+def iniciar_nivel2():
     tela_nivel2 = tk.Tk()
     tela_nivel2.title("The Writing Board - Nível 2")
     tela_nivel2.geometry("500x500")
@@ -56,14 +58,31 @@ def iniciar_nivel2(nome_usuario):
         exibir_pergunta()
 
     def finalizar_quiz():
-        salvar_pontuacao("nivel2", pontuacao, nome_usuario)
-        tela_nivel2.destroy()
-        iniciar_ranking(nome_usuario)
+        tela_nome = tk.Toplevel(tela_nivel2)
+        tela_nome.title("Informe seu nome")
+        tela_nome.geometry("300x150")
+        label_nome = tk.Label(tela_nome, text="Digite seu nome:", font=("Arial", 12), bg="#2d3e50", fg="#fbd11b")
+        label_nome.pack(pady=10)
+
+        entrada_nome = tk.Entry(tela_nome, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+        entrada_nome.pack(pady=10)
+
+        def salvar_e_fechar():
+            nome_usuario = entrada_nome.get()
+            if nome_usuario:
+                salvar_pontuacao("nivel2", pontuacao, nome_usuario)
+                tela_nome.destroy()
+                tela_nivel2.destroy()
+                iniciar_ranking()  # Atualiza o ranking com o novo nome e pontuação
+            else:
+                label_nome.config(text="Por favor, digite um nome!", fg="red")
+
+        botao_salvar = tk.Button(tela_nome, text="Salvar", command=salvar_e_fechar, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+        botao_salvar.pack(pady=10)
 
     label_pergunta = tk.Label(tela_nivel2, text="", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b", wraplength=450, justify="center")
     label_pergunta.pack(pady=20)
 
-    # Visor de pontuação
     label_pontuacao = tk.Label(tela_nivel2, text=f"Pontuação: {pontuacao}", font=("Arial", 12, "bold"), bg="#2d3e50", fg="#fbd11b")
     label_pontuacao.pack(pady=10)
 
@@ -77,7 +96,8 @@ def iniciar_nivel2(nome_usuario):
 
     tela_nivel2.mainloop()
 
-def iniciar_ranking(nome_usuario):
+
+def iniciar_ranking():
     tela_ranking = tk.Tk()
     tela_ranking.title("Ranking")
     tela_ranking.geometry("500x500")
@@ -98,10 +118,11 @@ def iniciar_ranking(nome_usuario):
     label_ranking = tk.Label(tela_ranking, text=ranking_texto, font=("Arial", 12), bg="#2d3e50", fg="#fbd11b", justify="left")
     label_ranking.pack(pady=20)
 
-    voltar_button = tk.Button(tela_ranking, text="Voltar", command=tela_ranking.destroy, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+    voltar_button = tk.Button(tela_ranking, text="Voltar", command=lambda: [tela_ranking.destroy(), iniciar_modulos()], font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
     voltar_button.pack(pady=10)
 
     tela_ranking.mainloop()
 
+
 if __name__ == "__main__":
-    iniciar_nivel2("Usuário Exemplo")
+    iniciar_nivel2()
