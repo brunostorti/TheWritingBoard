@@ -1,4 +1,5 @@
 import tkinter as tk
+import subprocess
 
 def iniciar_modulos():
     tela_modulos = tk.Tk()
@@ -20,24 +21,18 @@ def iniciar_modulos():
     botoes_frame = tk.Frame(tela_modulos, bg="#2d3e50")
     botoes_frame.pack(pady=40)
 
-    # Definindo nome_usuario fixo (ou pode vir de outra tela)
-    nome_usuario = "Usuário Teste"  # Substitua conforme necessário
-
-    # Funções para redirecionamento de cada nível
+    # Funções para redirecionamento de cada nível usando subprocess
     def abrir_nivel1():
         tela_modulos.destroy()  # Fecha a tela atual
-        import nivel1  # Importa o arquivo nivel1.py
-        nivel1.iniciar_nivel1(nome_usuario)  # Passa nome_usuario como argumento
+        subprocess.Popen(["python", "nivel1.py"])  # Abre o arquivo nivel1.py em um novo processo
 
     def abrir_nivel2():
         tela_modulos.destroy()  # Fecha a tela atual
-        import nivel2  # Importa o arquivo nivel2.py
-        nivel2.iniciar_nivel2(nome_usuario)  # Passa nome_usuario como argumento
+        subprocess.Popen(["python", "nivel2.py"])  # Abre o arquivo nivel2.py em um novo processo
 
     def abrir_nivel3():
         tela_modulos.destroy()  # Fecha a tela atual
-        import nivel3  # Importa o arquivo nivel3.py
-        nivel3.iniciar_nivel3(nome_usuario)  # Passa nome_usuario como argumento
+        subprocess.Popen(["python", "nivel3.py"])  # Abre o arquivo nivel3.py em um novo processo
 
     # Botões de seleção de nível com proporções e estilo aprimorados
     botao_nivel_1 = tk.Button(
@@ -88,8 +83,7 @@ def iniciar_modulos():
     # Botão "Voltar" para retornar à tela anterior (interface.py)
     def voltar_interface():
         tela_modulos.destroy()
-        import interface
-        interface.iniciar_interface()
+        subprocess.Popen(["python", "interface.py"])
 
     botao_voltar = tk.Button(
         tela_modulos, 

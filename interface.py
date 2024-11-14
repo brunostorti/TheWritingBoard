@@ -38,6 +38,12 @@ def iniciar_interface(nome="Usuário"):
         import ranking
         ranking.iniciar_ranking(nome)
 
+    # Função para redirecionar para a tela de perfil
+    def abrir_perfil():
+        tela_interface.destroy()
+        import perfil
+        perfil.iniciar_perfil()
+
     # Configuração de estilo para os botões com bordas arredondadas
     estilo_botao = {
         "font": ("Arial", 12, "bold"),
@@ -52,7 +58,7 @@ def iniciar_interface(nome="Usuário"):
         "cursor": "hand2"
     }
 
-    # Botões de navegação com o novo estilo
+    # Botões de navegação com o novo estilo, organizados em duas linhas
     botao_modulos = tk.Button(botoes_frame, text="Módulos", command=abrir_modulos, **estilo_botao)
     botao_modulos.grid(row=0, column=0, padx=15, pady=10)
 
@@ -60,7 +66,10 @@ def iniciar_interface(nome="Usuário"):
     botao_regras.grid(row=0, column=1, padx=15, pady=10)
 
     botao_ranking = tk.Button(botoes_frame, text="Ranking", command=abrir_ranking, **estilo_botao)
-    botao_ranking.grid(row=0, column=2, padx=15, pady=10)
+    botao_ranking.grid(row=1, column=0, padx=15, pady=10)
+
+    botao_perfil = tk.Button(botoes_frame, text="Perfil", command=abrir_perfil, **estilo_botao)
+    botao_perfil.grid(row=1, column=1, padx=15, pady=10)
 
     # Função para voltar à tela de login
     def voltar_login():

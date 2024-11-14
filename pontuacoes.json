@@ -51,6 +51,10 @@
         {
             "usuario": "Br1",
             "pontuacao": 20
+        },
+        {
+            "usuario": "Teste",
+            "pontuacao": 15
         }
     ],
     "nivel2": [
@@ -81,6 +85,10 @@
         {
             "usuario": "Ok",
             "pontuacao": 5
+        },
+        {
+            "usuario": "Teste2",
+            "pontuacao": 50
         }
     ],
     "nivel3": [
@@ -99,6 +107,10 @@
         {
             "usuario": "Ok",
             "pontuacao": 60
+        },
+        {
+            "usuario": "LEgal",
+            "pontuacao": 90
         }
     ]
 }
