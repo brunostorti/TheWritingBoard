@@ -1,13 +1,53 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 
 def iniciar_regras():
     tela_regras = tk.Tk()
     tela_regras.title("The Writing Board - Regras")
-    tela_regras.geometry("500x500")
-    tela_regras.configure(bg="#2d3e50")  # Cor de fundo alterada para #2d3e50
-    tela_regras.minsize(300, 400)
+    tela_regras.attributes("-fullscreen", True)  # Tela cheia
+    tela_regras.configure(bg="#1c2533")  # Cor de fundo compatível com a interface
+    tela_regras.minsize(800, 900)  # Tamanho mínimo, ajustando conforme o conteúdo
 
-    # Texto das regras com pontuações específicas
+    # Frame principal para organizar os elementos
+    frame_principal = tk.Frame(tela_regras, bg="#1c2533")
+    frame_principal.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+    # Frame para colocar a logo e o título lado a lado
+    frame_logo_titulo = tk.Frame(frame_principal, bg="#1c2533")
+    frame_logo_titulo.pack(pady=(10, 20))
+
+    # Adicionando a logo à esquerda
+    try:
+        img = Image.open("imagens/images.png")
+        img = img.resize((150, 150))  # Redimensiona a imagem para 150x150
+        logo = ImageTk.PhotoImage(img)
+        logo_label = tk.Label(frame_logo_titulo, image=logo, bg="#1c2533")
+        logo_label.image = logo
+        logo_label.pack(side=tk.LEFT, padx=(0, 20))  # Posiciona à esquerda com espaçamento
+    except Exception as e:
+        print(f"Erro ao carregar a imagem da logo: {e}")
+
+    # Adicionando a imagem de título à direita
+    try:
+        titulo_img = Image.open("imagens/titulo.png")
+        titulo_img = titulo_img.resize((800, 250))  # Aumenta a imagem para 800x200
+        titulo_logo = ImageTk.PhotoImage(titulo_img)
+        titulo_label = tk.Label(frame_logo_titulo, image=titulo_logo, bg="#1c2533")
+        titulo_label.image = titulo_logo
+        titulo_label.pack(side=tk.LEFT)  # Posiciona à direita da logo
+    except Exception as e:
+        print(f"Erro ao carregar a imagem do título: {e}")
+
+    # Moldura estilizada para as regras
+    moldura_regras = tk.Frame(
+        frame_principal,
+        bg="#3e5060",  # Fundo mais escuro
+        relief="groove",  # Estilo de borda
+        bd=5  # Largura da borda
+    )
+    moldura_regras.pack(pady=10, fill=tk.BOTH, expand=True)
+
+    # Texto das regras
     regras_texto = """
 Bem-vindo ao The Writing Board!
 
@@ -25,38 +65,40 @@ Boa sorte e lembre-se: pratique sua escrita e análise!
 
     # Label das regras estilizada
     label_regras = tk.Label(
-        tela_regras,
+        moldura_regras,
         text=regras_texto,
-        font=("Arial", 12),
-        wraplength=450,
+        font=("Arial", 16),
+        wraplength=800,
         justify="left",
-        bg="#2d3e50",  # Cor de fundo do label igual ao fundo da janela
-        fg="#fbd11b"   # Cor do texto em amarelo claro
+        bg="#3e5060",
+        fg="#ffd700",  # Cor dourada
+        padx=20,
+        pady=20
     )
-    label_regras.pack(pady=20, padx=10, fill=tk.BOTH, expand=True)
+    label_regras.pack(fill=tk.BOTH, expand=True)
 
     # Função para voltar à interface principal
     def voltar_interface():
         tela_regras.destroy()
-        import interface
+        import interface  # Substitua isso pelo nome correto do arquivo interface.py
         interface.iniciar_interface()
 
-    # Botão "Voltar" com estilo
+    # Botão estilizado "Voltar" com tamanho ajustado
     botao_voltar = tk.Button(
-        tela_regras,
+        frame_principal,
         text="Voltar",
         command=voltar_interface,
-        font=("Arial", 10, "bold"),
-        bg="#fbd11b",     # Cor do botão em amarelo claro
-        fg="#2d3e50",     # Cor do texto em roxo escuro
-        activebackground="#fbd11b",  # Mantém a cor ao clicar
-        activeforeground="#2d3e50", # Cor do texto ao clicar
-        relief="raised",
+        font=("Arial", 14, "bold"),  # Tamanho de fonte reduzido
+        bg="#ffd700",      # Cor dourada
+        fg="#1c2533",      # Texto em azul escuro
+        activebackground="#e6c300",  # Amarelo mais intenso
+        activeforeground="#1c2533",
+        relief="ridge",
         cursor="hand2",
-        padx=10,
-        pady=5
+        width=12,   # Largura do botão reduzida
+        height=2    # Altura do botão reduzida
     )
-    botao_voltar.pack(side=tk.BOTTOM, pady=20)
+    botao_voltar.pack(side=tk.BOTTOM, pady=20)  # Menor espaçamento entre o botão e o fundo
 
     tela_regras.mainloop()
 

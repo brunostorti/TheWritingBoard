@@ -5,9 +5,8 @@ from pymongo import MongoClient
 # Função para conectar ao MongoDB
 def conectar_mongodb():
     try:
-        # Conectar ao MongoDB
         client = MongoClient("mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-        db = client['Projeto_PI']  # Substitua pelo nome do seu banco de dados
+        db = client['Projeto_PI']
         return db
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao conectar ao banco de dados: {e}")
@@ -23,17 +22,14 @@ def cadastrar_usuario():
     elif len(senha) < 4:
         messagebox.showerror("Erro", "A senha deve ter pelo menos 4 caracteres.")
     else:
-        # Conectar ao MongoDB
         db = conectar_mongodb()
-        if db is not None:  # Verificação correta para garantir que a conexão foi bem-sucedida
-            # Verificar se o nome já está cadastrado
-            usuarios_collection = db['nome']  # Coleção para os nomes de usuário
-            senha_collection = db['senha']  # Coleção para as senhas
+        if db is not None:
+            usuarios_collection = db['nome']
+            senha_collection = db['senha']
             
             if usuarios_collection.find_one({"nome": nome}):
                 messagebox.showerror("Erro", "Esse nome já está cadastrado.")
             else:
-                # Inserir o nome e a senha nas coleções apropriadas
                 usuarios_collection.insert_one({"nome": nome})
                 senha_collection.insert_one({"nome": nome, "senha": senha})
                 
@@ -47,12 +43,10 @@ def realizar_login():
     senha = entrada_login_senha.get()
 
     db = conectar_mongodb()
-    if db is not None:  # Verificação correta para garantir que a conexão foi bem-sucedida
-        # Acessar as coleções de nome e senha
+    if db is not None:
         usuarios_collection = db['nome']
         senha_collection = db['senha']
         
-        # Verificar se o nome existe e a senha corresponde
         usuario = usuarios_collection.find_one({"nome": nome})
         if usuario:
             senha_db = senha_collection.find_one({"nome": nome})
@@ -63,11 +57,11 @@ def realizar_login():
             else:
                 messagebox.showerror("Erro", "Nome ou senha incorretos.")
         else:
-            messagebox.showerror("Erro", "Nome não encontado.")
+            messagebox.showerror("Erro", "Nome não encontrado.")
 
 # Função para abrir a interface após login
 def abrir_interface(nome):
-    import interface  # Certifique-se de que o módulo interface.py existe
+    import interface
     interface.iniciar_interface(nome)
 
 # Função para criar a tela de login
@@ -76,42 +70,49 @@ def tela_login():
     global tela_login
     tela_login = tk.Tk()
     tela_login.title("The Writing Board - Tela de Login")
-    tela_login.geometry("500x500")
-    tela_login.configure(bg="#222831")  # Cor de fundo da tela
+    tela_login.state("zoomed")  # Tela cheia
+    tela_login.configure(bg="#1c2533")  # Fundo azul-acinzentado
 
-    # Título da tela de login
-    titulo = tk.Label(tela_login, text="Bem-vindo, jogador!", font=("Arial", 18, "bold"), fg="#ffd369", bg="#222831")
+    # Frame principal para centralizar os elementos
+    frame_principal = tk.Frame(tela_login, bg="#1c2533")
+    frame_principal.place(relx=0.5, rely=0.5, anchor="center")  # Centralizado na tela
+
+    # Título da tela
+    titulo = tk.Label(frame_principal, text="The Writing Board", font=("Arial", 40, "bold"), fg="#ffd700", bg="#1c2533")
     titulo.pack(pady=20)
 
+    subtitulo = tk.Label(frame_principal, text="Entre ou Cadastre-se para começar sua jornada", font=("Arial", 16), fg="#eeeeee", bg="#1c2533")
+    subtitulo.pack(pady=10)
+
     # Seção de Cadastro
-    secao_cadastro = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=20, pady=20)
+    secao_cadastro = tk.LabelFrame(frame_principal, text="Cadastro", bg="#1c2533", fg="#ffd700", font=("Arial", 18, "bold"), padx=30, pady=30, bd=5, relief="solid")
     secao_cadastro.pack(fill="both", expand=True, padx=20, pady=10)
 
-    tk.Label(secao_cadastro, text="Nome:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=0, column=0, sticky="e", padx=5, pady=5)
-    entrada_nome = tk.Entry(secao_cadastro, width=30, font=("Arial", 12))
-    entrada_nome.grid(row=0, column=1, padx=5, pady=5)
+    tk.Label(secao_cadastro, text="Nome:", font=("Arial", 14), fg="#eeeeee", bg="#1c2533").grid(row=0, column=0, sticky="e", padx=10, pady=10)
+    entrada_nome = tk.Entry(secao_cadastro, width=30, font=("Arial", 14))
+    entrada_nome.grid(row=0, column=1, padx=10, pady=10)
 
-    tk.Label(secao_cadastro, text="Senha:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=1, column=0, sticky="e", padx=5, pady=5)
-    entrada_senha = tk.Entry(secao_cadastro, show="*", width=30, font=("Arial", 12))
-    entrada_senha.grid(row=1, column=1, padx=5, pady=5)
+    tk.Label(secao_cadastro, text="Senha:", font=("Arial", 14), fg="#eeeeee", bg="#1c2533").grid(row=1, column=0, sticky="e", padx=10, pady=10)
+    entrada_senha = tk.Entry(secao_cadastro, show="*", width=30, font=("Arial", 14))
+    entrada_senha.grid(row=1, column=1, padx=10, pady=10)
 
-    botao_cadastrar = tk.Button(secao_cadastro, text="Cadastrar", font=("Arial", 14, "bold"), bg="#fbd11b", fg="#222831", relief="raised", bd=4, width=20, height=2, command=cadastrar_usuario)
-    botao_cadastrar.grid(row=2, column=0, columnspan=2, pady=10)
+    botao_cadastrar = tk.Button(secao_cadastro, text="Cadastrar", font=("Arial", 14, "bold"), bg="#ffd700", fg="#1c2533", command=cadastrar_usuario)
+    botao_cadastrar.grid(row=2, column=0, columnspan=2, pady=20)
 
     # Seção de Login
-    secao_login = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=20, pady=20)
+    secao_login = tk.LabelFrame(frame_principal, text="Login", bg="#1c2533", fg="#ffd700", font=("Arial", 18, "bold"), padx=30, pady=30, bd=5, relief="solid")
     secao_login.pack(fill="both", expand=True, padx=20, pady=10)
 
-    tk.Label(secao_login, text="Nome:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=0, column=0, sticky="e", padx=5, pady=5)
-    entrada_login_nome = tk.Entry(secao_login, width=30, font=("Arial", 12))
-    entrada_login_nome.grid(row=0, column=1, padx=5, pady=5)
+    tk.Label(secao_login, text="Nome:", font=("Arial", 14), fg="#eeeeee", bg="#1c2533").grid(row=0, column=0, sticky="e", padx=10, pady=10)
+    entrada_login_nome = tk.Entry(secao_login, width=30, font=("Arial", 14))
+    entrada_login_nome.grid(row=0, column=1, padx=10, pady=10)
 
-    tk.Label(secao_login, text="Senha:", font=("Arial", 12), fg="#fff", bg="#2d3e50").grid(row=1, column=0, sticky="e", padx=5, pady=5)
-    entrada_login_senha = tk.Entry(secao_login, show="*", width=30, font=("Arial", 12))
-    entrada_login_senha.grid(row=1, column=1, padx=5, pady=5)
+    tk.Label(secao_login, text="Senha:", font=("Arial", 14), fg="#eeeeee", bg="#1c2533").grid(row=1, column=0, sticky="e", padx=10, pady=10)
+    entrada_login_senha = tk.Entry(secao_login, show="*", width=30, font=("Arial", 14))
+    entrada_login_senha.grid(row=1, column=1, padx=10, pady=10)
 
-    botao_login = tk.Button(secao_login, text="Login", font=("Arial", 14, "bold"), bg="#fbd11b", fg="#222831", relief="raised", bd=4, width=20, height=2, command=realizar_login)
-    botao_login.grid(row=2, column=0, columnspan=2, pady=10)
+    botao_login = tk.Button(secao_login, text="Login", font=("Arial", 14, "bold"), bg="#ffd700", fg="#1c2533", command=realizar_login)
+    botao_login.grid(row=2, column=0, columnspan=2, pady=20)
 
     tela_login.mainloop()
 

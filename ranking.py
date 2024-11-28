@@ -19,72 +19,89 @@ def salvar_pontuacao(nivel, pontuacao, usuario):
 def iniciar_ranking(nome_usuario):
     tela_ranking = tk.Tk()
     tela_ranking.title("The Writing Board - Ranking")
-    tela_ranking.geometry("500x500")
     tela_ranking.configure(bg="#2d3e50")
+
+    # Ativar tela cheia
+    tela_ranking.attributes("-fullscreen", True)
+
+    # Texto informativo com o nome do usuário logado
+    texto_informativo = tk.Label(
+        tela_ranking,
+        text=f"Aqui, {nome_usuario}, ficam suas últimas pontuações nos níveis.",
+        font=("Arial", 16, "bold"),
+        bg="#2d3e50",
+        fg="#fbd11b",
+        wraplength=800,
+        justify="center"
+    )
+    texto_informativo.pack(pady=20)
+
+    # Frame para organizar rankings em colunas
+    frame_ranking = tk.Frame(tela_ranking, bg="#2d3e50")
+    frame_ranking.pack(pady=20, fill=tk.BOTH, expand=True)
+
+    # Função para formatar e exibir ranking de um nível
+    def criar_coluna_ranking(parent, titulo, pontuacoes):
+        frame_coluna = tk.Frame(parent, bg="#34495e", padx=10, pady=10)
+        frame_coluna.pack(side=tk.LEFT, padx=20, pady=10, fill=tk.BOTH, expand=True)
+
+        label_titulo = tk.Label(
+            frame_coluna,
+            text=titulo,
+            font=("Arial", 18, "bold"),
+            bg="#34495e",
+            fg="#fbd11b"
+        )
+        label_titulo.pack(pady=10)
+
+        texto_ranking = ""
+        if pontuacoes:
+            for i, entry in enumerate(pontuacoes, start=1):
+                texto_ranking += f"{i}. {entry['usuario']} - {entry['pontuacao']} pontos\n"
+        else:
+            texto_ranking = "Nenhuma pontuação registrada.\n"
+
+        label_pontuacoes = tk.Label(
+            frame_coluna,
+            text=texto_ranking,
+            font=("Arial", 14),
+            bg="#34495e",
+            fg="white",
+            justify="left"
+        )
+        label_pontuacoes.pack(pady=10)
 
     # Buscar pontuações por nível no MongoDB
     nivel1_pontuacoes = pontuacoes_collection.find({"nivel": "nivel1"}).sort("pontuacao", -1).limit(10)
     nivel2_pontuacoes = pontuacoes_collection.find({"nivel": "nivel2"}).sort("pontuacao", -1).limit(10)
     nivel3_pontuacoes = pontuacoes_collection.find({"nivel": "nivel3"}).sort("pontuacao", -1).limit(10)
 
-    # Texto informativo com o nome do usuário logado
-    texto_informativo = tk.Label(
-        tela_ranking,
-        text=f"Aqui, {nome_usuario}, ficam suas últimas pontuações nos níveis.",
-        font=("Arial", 12),
-        bg="#2d3e50",
-        fg="#fbd11b",
-        wraplength=450,
-        justify="center"
-    )
-    texto_informativo.pack(pady=20)
-
-    # Função para formatar o ranking de um nível
-    def formatar_ranking(nivel, pontuacoes):
-        ranking_texto = f"Ranking Nível {nivel.capitalize()}:\n"
-        if pontuacoes:
-            for i, entry in enumerate(pontuacoes, start=1):
-                ranking_texto += f"{i}. {entry['usuario']} - {entry['pontuacao']} pontos\n"
-        else:
-            ranking_texto += "Nenhuma pontuação registrada.\n"
-        return ranking_texto
-
-    # Exibir as pontuações na tela de forma limpa
-    ranking_nivel1 = formatar_ranking("1", nivel1_pontuacoes)
-    ranking_nivel2 = formatar_ranking("2", nivel2_pontuacoes)
-    ranking_nivel3 = formatar_ranking("3", nivel3_pontuacoes)
-
-    label_pontuacoes = tk.Label(
-        tela_ranking,
-        text=ranking_nivel1 + "\n" + ranking_nivel2 + "\n" + ranking_nivel3,
-        font=("Arial", 12),
-        bg="#2d3e50",
-        fg="white",
-        justify="left"
-    )
-    label_pontuacoes.pack(pady=20)
+    # Criar colunas para cada nível
+    criar_coluna_ranking(frame_ranking, "Ranking Nível 1", nivel1_pontuacoes)
+    criar_coluna_ranking(frame_ranking, "Ranking Nível 2", nivel2_pontuacoes)
+    criar_coluna_ranking(frame_ranking, "Ranking Nível 3", nivel3_pontuacoes)
 
     # Função para voltar à tela de módulos
     def voltar_modulos():
-        tela_ranking.quit()  # Em vez de destruir, usamos quit() para encerrar o loop da tela de ranking
-        tela_ranking.destroy()  # E agora, podemos destruir a tela de ranking para liberar recursos
-        import modulos  # Redireciona para a tela de módulos
-        modulos.iniciar_modulos()  # Chama a função de modulos.py para abrir a tela de módulos
+        tela_ranking.quit()
+        tela_ranking.destroy()
+        import modulos
+        modulos.iniciar_modulos()
 
     # Botão "Voltar" para retornar à tela de módulos
     botao_voltar = tk.Button(
         tela_ranking,
         text="Voltar",
         command=voltar_modulos,
-        font=("Arial", 10, "bold"),
+        font=("Arial", 14, "bold"),
         bg="#fbd11b",
         fg="#2d3e50",
         activebackground="#fbd11b",
         activeforeground="#2d3e50",
         relief="raised",
         cursor="hand2",
-        padx=10,
-        pady=5
+        padx=20,
+        pady=10
     )
     botao_voltar.pack(side=tk.BOTTOM, pady=20)
 
