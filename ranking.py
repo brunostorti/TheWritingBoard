@@ -1,23 +1,36 @@
 import tkinter as tk
-import json
+from pymongo import MongoClient
 
+# Conectar ao MongoDB
+client = MongoClient('mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+db = client['Projeto_PI']
+pontuacoes_collection = db['pontuacoes']
+
+# Função para salvar a pontuação na coleção "pontuacoes"
+def salvar_pontuacao(nivel, pontuacao, usuario):
+    dados = {
+        "nivel": nivel,
+        "usuario": usuario,
+        "pontuacao": pontuacao
+    }
+    pontuacoes_collection.insert_one(dados)
+
+# Função para buscar e exibir o ranking
 def iniciar_ranking(nome_usuario):
     tela_ranking = tk.Tk()
     tela_ranking.title("The Writing Board - Ranking")
     tela_ranking.geometry("500x500")
-    tela_ranking.configure(bg="#2d3e50")  # Fundo da tela em azul escuro
+    tela_ranking.configure(bg="#2d3e50")
 
-    # Carregar as pontuações do arquivo JSON
-    try:
-        with open("pontuacoes.json", "r") as arquivo:
-            pontuacoes = json.load(arquivo)
-    except FileNotFoundError:
-        pontuacoes = {}
+    # Buscar pontuações por nível no MongoDB
+    nivel1_pontuacoes = pontuacoes_collection.find({"nivel": "nivel1"}).sort("pontuacao", -1).limit(10)
+    nivel2_pontuacoes = pontuacoes_collection.find({"nivel": "nivel2"}).sort("pontuacao", -1).limit(10)
+    nivel3_pontuacoes = pontuacoes_collection.find({"nivel": "nivel3"}).sort("pontuacao", -1).limit(10)
 
     # Texto informativo com o nome do usuário logado
     texto_informativo = tk.Label(
         tela_ranking,
-        text=f"Aqui, {nome_usuario}, ficarão suas últimas pontuações das tentativas de níveis.",
+        text=f"Aqui, {nome_usuario}, ficam suas últimas pontuações nos níveis.",
         font=("Arial", 12),
         bg="#2d3e50",
         fg="#fbd11b",
@@ -26,21 +39,24 @@ def iniciar_ranking(nome_usuario):
     )
     texto_informativo.pack(pady=20)
 
-    # Criar uma string para exibir as pontuações de forma limpa
-    pontuacoes_texto = "Pontuações:\n"
-    if pontuacoes:
-        for nivel, pontos_lista in pontuacoes.items():
-            for item in pontos_lista:
-                usuario = item["usuario"]
-                pontos = item["pontuacao"]
-                pontuacoes_texto += f"{nivel.capitalize()}: {usuario} - {pontos} pontos\n"
-    else:
-        pontuacoes_texto += "Nenhuma pontuação registrada.\n"
+    # Função para formatar o ranking de um nível
+    def formatar_ranking(nivel, pontuacoes):
+        ranking_texto = f"Ranking Nível {nivel.capitalize()}:\n"
+        if pontuacoes:
+            for i, entry in enumerate(pontuacoes, start=1):
+                ranking_texto += f"{i}. {entry['usuario']} - {entry['pontuacao']} pontos\n"
+        else:
+            ranking_texto += "Nenhuma pontuação registrada.\n"
+        return ranking_texto
 
     # Exibir as pontuações na tela de forma limpa
+    ranking_nivel1 = formatar_ranking("1", nivel1_pontuacoes)
+    ranking_nivel2 = formatar_ranking("2", nivel2_pontuacoes)
+    ranking_nivel3 = formatar_ranking("3", nivel3_pontuacoes)
+
     label_pontuacoes = tk.Label(
         tela_ranking,
-        text=pontuacoes_texto,
+        text=ranking_nivel1 + "\n" + ranking_nivel2 + "\n" + ranking_nivel3,
         font=("Arial", 12),
         bg="#2d3e50",
         fg="white",
@@ -74,5 +90,6 @@ def iniciar_ranking(nome_usuario):
 
     tela_ranking.mainloop()
 
+# Exemplo de como iniciar o ranking com um nome de usuário
 if __name__ == "__main__":
     iniciar_ranking("Usuário Exemplo")

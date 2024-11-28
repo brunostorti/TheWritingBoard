@@ -1,10 +1,30 @@
 import tkinter as tk
 from login import tela_login  # Importa a função tela_login de login.py
+from pymongo import MongoClient  # Importa o MongoClient para conectar ao MongoDB
 
 # Função para redirecionar o jogador para a tela de login
 def abrir_tela_login():
     tela_inicio.destroy()  # Fecha a tela de início do Tkinter
     tela_login()  # Chama a função tela_login para exibir a tela de login
+
+# Função para conectar ao MongoDB
+def conectar_mongodb():
+    try:
+        # Cria a conexão usando o URI do MongoDB
+        client = MongoClient("mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+        
+        # Acessa o banco de dados desejado
+        db = client['Projeto_PI']  # Substitua 'nome_do_seu_banco' pelo nome do seu banco
+        
+        # Exemplo de acesso a uma coleção dentro do banco de dados
+        colecao = db['user']  # Substitua 'nome_da_sua_colecao' pelo nome da sua coleção
+        
+        # Apenas um exemplo de operação: contar o número de documentos na coleção
+        numero_de_documentos = colecao.count_documents({})
+        print(f"Número de documentos na coleção: {numero_de_documentos}")
+        
+    except Exception as e:
+        print("Erro ao conectar ao MongoDB:", e)
 
 # Configurações da tela de início
 tela_inicio = tk.Tk()
@@ -38,7 +58,7 @@ botao_iniciar = tk.Button(
     bd=4,
     width=20,
     height=2,
-    command=abrir_tela_login  # Modifica a função para chamar tela_login
+    command=lambda: [abrir_tela_login(), conectar_mongodb()]  # Conecta ao MongoDB ao iniciar
 )
 botao_iniciar.pack()
 

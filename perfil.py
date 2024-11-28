@@ -1,46 +1,57 @@
 import tkinter as tk
 from tkinter import messagebox
-import json
 import subprocess
+from pymongo import MongoClient
 
-def carregar_usuarios():
-    try:
-        with open("usuarios.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
+# Reutilizando a conexão já existente ao MongoDB
+db = MongoClient("mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")["Projeto_PI"]
+senha_collection = db["senha"]  # Coleção onde nome e senha estão armazenados
+nome_collection = db["nome"]  # Coleção onde o nome do usuário está armazenado
 
-def salvar_usuarios(usuarios):
-    with open("usuarios.json", "w") as f:
-        json.dump(usuarios, f)
-
-usuarios = carregar_usuarios()
-
+# Função para atualizar o perfil no MongoDB
 def atualizar_perfil():
     nome_atual = entrada_nome_atual.get()
     senha_atual = entrada_senha_atual.get()
     novo_nome = entrada_novo_nome.get()
     nova_senha = entrada_nova_senha.get()
-    
-    if nome_atual in usuarios and usuarios[nome_atual] == senha_atual:
-        if len(novo_nome) < 1:
-            messagebox.showerror("Erro", "Por favor, insira um novo nome.")
-        elif len(nova_senha) < 4:
-            messagebox.showerror("Erro", "A nova senha deve ter pelo menos 4 caracteres.")
-        else:
-            # Remove o usuário com o nome atual e cria uma nova entrada com as atualizações
-            del usuarios[nome_atual]
-            usuarios[novo_nome] = nova_senha
-            salvar_usuarios(usuarios)
-            messagebox.showinfo("Sucesso", "Perfil atualizado com sucesso!")
-            voltar_interface()
-    else:
-        messagebox.showerror("Erro", "Nome atual ou senha atual incorretos.")
 
+    # Verificar se o nome e a senha atual estão corretos na coleção 'senha'
+    usuario = senha_collection.find_one({"nome": nome_atual})
+
+    if usuario:
+        if usuario['senha'] == senha_atual:
+            if len(novo_nome) < 1:
+                messagebox.showerror("Erro", "Por favor, insira um novo nome.")
+            elif len(nova_senha) < 4:
+                messagebox.showerror("Erro", "A nova senha deve ter pelo menos 4 caracteres.")
+            else:
+                # Verificar se já existe um usuário com o novo nome na coleção 'nome'
+                if nome_collection.find_one({"nome": novo_nome}):
+                    messagebox.showerror("Erro", "Já existe um usuário com este nome.")
+                    return
+                else:
+                    # Atualizar o nome na coleção 'nome'
+                    nome_collection.delete_one({"nome": nome_atual})  # Remove o nome antigo
+                    nome_collection.insert_one({"nome": novo_nome})  # Adiciona o novo nome
+
+                    # Atualizar o nome e a senha na coleção 'senha'
+                    senha_collection.update_one(
+                        {"nome": nome_atual},
+                        {"$set": {"nome": novo_nome, "senha": nova_senha}}
+                    )
+                    messagebox.showinfo("Sucesso", "Perfil atualizado com sucesso!")
+                    voltar_interface()
+        else:
+            messagebox.showerror("Erro", "Senha atual incorreta.")
+    else:
+        messagebox.showerror("Erro", "Nome atual não encontrado.")
+
+# Função para voltar à interface anterior
 def voltar_interface():
     tela_perfil.destroy()
     subprocess.Popen(["python", "interface.py"])
 
+# Função para iniciar a tela de perfil
 def iniciar_perfil():
     global tela_perfil, entrada_nome_atual, entrada_senha_atual, entrada_novo_nome, entrada_nova_senha
     tela_perfil = tk.Tk()

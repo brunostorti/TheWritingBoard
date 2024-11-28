@@ -1,22 +1,40 @@
 import tkinter as tk
-import json
-from modulos import iniciar_modulos  # Importa a função iniciar_modulos de modulos.py
+from pymongo import MongoClient
+from ranking import iniciar_ranking  # Importa a função de ranking
 
+# Conectar ao MongoDB
+client = MongoClient('mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+db = client['Projeto_PI']
+pontuacoes_collection = db['pontuacoes']
+usuarios_collection = db['nome']  # Nome da coleção de usuários
+
+# Função para obter o nome do usuário logado
+def obter_nome_usuario_logado():
+    # Aqui você deve buscar o nome do usuário logado do seu sistema de autenticação
+    # Como exemplo, vou pegar o primeiro nome da coleção de usuários, ajustando conforme seu sistema.
+    usuario_logado = usuarios_collection.find_one()  # Modifique a consulta conforme necessário
+    return usuario_logado["nome"] if usuario_logado else "Desconhecido"
 
 def salvar_pontuacao(nivel, pontuacao, usuario):
-    try:
-        with open("pontuacoes.json", "r") as arquivo:
-            dados = json.load(arquivo)
-    except FileNotFoundError:
-        dados = {}
+    dados = {
+        "nivel": nivel,
+        "usuario": usuario,
+        "pontuacao": pontuacao
+    }
+    pontuacoes_collection.insert_one(dados)
 
-    if nivel not in dados:
-        dados[nivel] = []
-    dados[nivel].append({"usuario": usuario, "pontuacao": pontuacao})
-
-    with open("pontuacoes.json", "w") as arquivo:
-        json.dump(dados, arquivo, indent=4)
-
+def buscar_perguntas():
+    # Buscar todas as perguntas e opções da coleção 'perguntas1'
+    perguntas_collection = db['perguntas1']  # Usar a coleção 'perguntas1' para este nível
+    perguntas_cursor = perguntas_collection.find()
+    perguntas = []
+    for pergunta in perguntas_cursor:
+        perguntas.append({
+            "pergunta": pergunta["pergunta"],
+            "opcoes": pergunta["opcoes"],
+            "correta": pergunta["correta"]
+        })
+    return perguntas
 
 def iniciar_nivel1():
     tela_nivel1 = tk.Tk()
@@ -24,21 +42,11 @@ def iniciar_nivel1():
     tela_nivel1.geometry("500x500")
     tela_nivel1.configure(bg="#2d3e50")
 
-    perguntas = [
-        {"pergunta": "O que é uma tese em um texto dissertativo?", "opcoes": ["Um exemplo", "Uma citação", "A principal ideia do autor", "Um argumento secundário"], "correta": 2},
-        {"pergunta": "Para que serve o parágrafo de introdução?", "opcoes": ["Apresentar a conclusão", "Apresentar a tese", "Fornecer argumentos", "Criticar a tese"], "correta": 1},
-        {"pergunta": "Qual a função dos argumentos em um texto dissertativo?", "opcoes": ["Apresentar dados", "Defender a tese", "Fornecer exemplos", "Contradizer a tese"], "correta": 1},
-        {"pergunta": "Qual é o objetivo da conclusão de um texto dissertativo?", "opcoes": ["Introduzir novas ideias", "Resumir os argumentos", "Criticar a tese", "Apresentar a tese"], "correta": 1},
-        {"pergunta": "O que caracteriza uma introdução eficiente?", "opcoes": ["Ser longa", "Ser vaga", "Contextualizar a tese", "Repetir a conclusão"], "correta": 2},
-        {"pergunta": "Como um argumento deve ser estruturado?", "opcoes": ["Baseado em opinião", "Sem dados", "De forma lógica e fundamentada", "Sem relação com a tese"], "correta": 2},
-        {"pergunta": "O que significa ser objetivo em um texto?", "opcoes": ["Usar opiniões pessoais", "Usar dados e fatos", "Fazer perguntas", "Usar linguagem poética"], "correta": 1},
-        {"pergunta": "Qual o papel dos conectivos em um texto?", "opcoes": ["Separar ideias", "Conectar parágrafos", "Dar opinião", "Enfeitar o texto"], "correta": 1},
-        {"pergunta": "Como um texto deve ser concluído?", "opcoes": ["Apresentando novas ideias", "Resumindo e reforçando a tese", "Com perguntas", "Com citações"], "correta": 1},
-        {"pergunta": "Qual é a importância de um bom vocabulário?", "opcoes": ["Enfeitar o texto", "Tornar a leitura complexa", "Comunicar de forma clara", "Apresentar opiniões"], "correta": 2},
-    ]
+    perguntas = buscar_perguntas()  # Busca as perguntas diretamente da coleção 'perguntas1'
 
     pontuacao = 0
     indice_pergunta = 0
+    nome_usuario = obter_nome_usuario_logado()  # Pega o nome do usuário logado automaticamente
 
     def exibir_pergunta():
         nonlocal indice_pergunta
@@ -59,27 +67,9 @@ def iniciar_nivel1():
         exibir_pergunta()
 
     def finalizar_quiz():
-        tela_nome = tk.Toplevel(tela_nivel1)
-        tela_nome.title("Informe seu nome")
-        tela_nome.geometry("300x150")
-        label_nome = tk.Label(tela_nome, text="Digite seu nome:", font=("Arial", 12), bg="#2d3e50", fg="#fbd11b")
-        label_nome.pack(pady=10)
-
-        entrada_nome = tk.Entry(tela_nome, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-        entrada_nome.pack(pady=10)
-
-        def salvar_e_fechar():
-            nome_usuario = entrada_nome.get()
-            if nome_usuario:
-                salvar_pontuacao("nivel1", pontuacao, nome_usuario)
-                tela_nome.destroy()
-                tela_nivel1.destroy()
-                iniciar_ranking()  # Atualiza o ranking com o novo nome e pontuação
-            else:
-                label_nome.config(text="Por favor, digite um nome!", fg="red")
-
-        botao_salvar = tk.Button(tela_nome, text="Salvar", command=salvar_e_fechar, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-        botao_salvar.pack(pady=10)
+        salvar_pontuacao("nivel1", pontuacao, nome_usuario)  # Salva a pontuação com o nome do usuário logado
+        tela_nivel1.destroy()  # Fecha a tela do nível
+        iniciar_ranking(nome_usuario)  # Chama a função para exibir o ranking com o nome do usuário
 
     label_pergunta = tk.Label(tela_nivel1, text="", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b", wraplength=450, justify="center")
     label_pergunta.pack(pady=20)
@@ -97,33 +87,5 @@ def iniciar_nivel1():
 
     tela_nivel1.mainloop()
 
-
-def iniciar_ranking():
-    tela_ranking = tk.Tk()
-    tela_ranking.title("Ranking")
-    tela_ranking.geometry("500x500")
-    tela_ranking.configure(bg="#2d3e50")
-
-    try:
-        with open("pontuacoes.json", "r") as arquivo:
-            dados = json.load(arquivo)
-    except FileNotFoundError:
-        dados = {}
-
-    ranking_texto = "Ranking\n\n"
-    for nivel, pontuacoes in dados.items():
-        ranking_texto += f"Nível {nivel}:\n"
-        for entry in pontuacoes:
-            ranking_texto += f"{entry['usuario']} - {entry['pontuacao']} pontos\n"
-
-    label_ranking = tk.Label(tela_ranking, text=ranking_texto, font=("Arial", 12), bg="#2d3e50", fg="#fbd11b", justify="left")
-    label_ranking.pack(pady=20)
-
-    voltar_button = tk.Button(tela_ranking, text="Voltar", command=lambda: [tela_ranking.destroy(), iniciar_modulos()], font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-    voltar_button.pack(pady=10)
-
-    tela_ranking.mainloop()
-
-
 if __name__ == "__main__":
-    iniciar_nivel1()
+    iniciar_nivel1()  # Inicia o jogo no nível 1
