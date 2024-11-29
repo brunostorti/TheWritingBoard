@@ -1,3 +1,4 @@
+import bcrypt
 import tkinter as tk
 from tkinter import messagebox
 import subprocess
@@ -18,7 +19,8 @@ def atualizar_perfil():
     usuario = usuarios_collection.find_one({"nome": nome_atual})
 
     if usuario:
-        if usuario['senha'] == senha_atual:
+        # Verificar se a senha fornecida corresponde à senha criptografada
+        if bcrypt.checkpw(senha_atual.encode('utf-8'), usuario['senha']):  # Sem o .encode() na senha do banco
             if len(novo_nome) < 1:
                 messagebox.showerror("Erro", "Por favor, insira um novo nome.")
             elif len(nova_senha) < 4:
@@ -29,10 +31,13 @@ def atualizar_perfil():
                     messagebox.showerror("Erro", "Já existe um usuário com este nome.")
                     return
                 else:
+                    # Criptografar a nova senha antes de salvar
+                    nova_senha_criptografada = bcrypt.hashpw(nova_senha.encode('utf-8'), bcrypt.gensalt())
+
                     # Atualizar o nome e a senha na coleção 'usuarios'
                     usuarios_collection.update_one(
                         {"nome": nome_atual},
-                        {"$set": {"nome": novo_nome, "senha": nova_senha}}
+                        {"$set": {"nome": novo_nome, "senha": nova_senha_criptografada}}
                     )
                     messagebox.showinfo("Sucesso", "Perfil atualizado com sucesso!")
                     voltar_interface()
