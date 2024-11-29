@@ -19,14 +19,14 @@ def conectar_mongodb():
         )
 
         # Acessa o banco de dados desejado
-        db = client["Projeto_PI"]  # Substitua 'nome_do_seu_banco' pelo nome do seu banco
+        db = client["ProjetoPI"]  # Nome correto do banco de dados: ProjetoPI
 
-        # Exemplo de acesso a uma coleção dentro do banco de dados
-        colecao = db["user"]  # Substitua 'nome_da_sua_colecao' pelo nome da sua coleção
+        # Acessa a coleção de usuários (onde nome e senha são armazenados)
+        colecao_usuarios = db["usuarios"]  # Coleção correta de usuários
 
-        # Apenas um exemplo de operação: contar o número de documentos na coleção
-        numero_de_documentos = colecao.count_documents({})
-        print(f"Número de documentos na coleção: {numero_de_documentos}")
+        # Exemplo de operação: contar o número de documentos na coleção
+        numero_de_documentos = colecao_usuarios.count_documents({})
+        print(f"Número de documentos na coleção de usuários: {numero_de_documentos}")
 
     except Exception as e:
         print("Erro ao conectar ao MongoDB:", e)

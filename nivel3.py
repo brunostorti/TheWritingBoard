@@ -1,60 +1,44 @@
 import tkinter as tk
-import json
-from modulos import iniciar_modulos  # Importa a função iniciar_modulos de modulos.py
+from pymongo import MongoClient
+from tkinter import messagebox
 
-def salvar_pontuacao(nivel, pontuacao, usuario):
-    try:
-        with open("pontuacoes.json", "r") as arquivo:
-            dados = json.load(arquivo)
-    except FileNotFoundError:
-        dados = {}
+# Conectar ao MongoDB
+client = MongoClient('mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+db = client['ProjetoPI']
+pontuacoes_collection = db['pontuacoes']
+usuarios_collection = db['usuarios']  # Nome correto da coleção de usuários
 
-    if nivel not in dados:
-        dados[nivel] = []
-    dados[nivel].append({"usuario": usuario, "pontuacao": pontuacao})
+# Função para salvar a pontuação no banco de dados
+def salvar_pontuacao(nivel, pontuacao, nome_usuario):
+    dados = {
+        "nivel": nivel,
+        "nome": nome_usuario,  # Nome do usuário fornecido
+        "pontuacao": pontuacao
+    }
+    pontuacoes_collection.insert_one(dados)  # Salva a pontuação no banco
+    print(f"Pontuação salva para {nome_usuario}: {pontuacao}")  # Depuração
 
-    with open("pontuacoes.json", "w") as arquivo:
-        json.dump(dados, arquivo, indent=4)
+# Função para buscar as perguntas de um nível
+def buscar_perguntas(nivel):
+    perguntas_collection = db[f'perguntas{nivel}']
+    perguntas_cursor = perguntas_collection.find()
+    perguntas = []
+    for pergunta in perguntas_cursor:
+        perguntas.append({
+            "pergunta": pergunta["pergunta"],
+            "opcoes": pergunta["opcoes"],
+            "correta": pergunta["correta"]
+        })
+    return perguntas
 
-
-def iniciar_nivel3():
+# Função para iniciar o quiz de um nível
+def iniciar_nivel3(nome_usuario):
     tela_nivel3 = tk.Tk()
-    tela_nivel3.title("The Writing Board - Nível 3")
+    tela_nivel3.title(f"The Writing Board - Nível 3 (Jogador: {nome_usuario})")
     tela_nivel3.geometry("500x500")
     tela_nivel3.configure(bg="#2d3e50")
 
-    perguntas = [
-        {"pergunta": "O que caracteriza uma tese sofisticada em um texto dissertativo-argumentativo?", 
-         "opcoes": ["Apresenta uma opinião pessoal", "É genérica e aplicável a vários contextos", "É clara e complexa, abordando nuances", "Evita controvérsias"], 
-         "correta": 2},
-        {"pergunta": "Qual é o papel dos conectivos em parágrafos de argumentação complexa?", 
-         "opcoes": ["Introduzir novas ideias", "Estabelecer relações lógicas entre ideias", "Enfeitar o texto", "Aumentar o número de palavras"], 
-         "correta": 1},
-        {"pergunta": "Como a conclusão de um texto dissertativo deve ser estruturada para reforçar a tese?", 
-         "opcoes": ["Reafirma a tese e propõe uma reflexão final", "Introduz novos argumentos", "Repete a introdução", "Apresenta opiniões"], 
-         "correta": 0},
-        {"pergunta": "Qual é o benefício de usar dados e citações em uma redação argumentativa?", 
-         "opcoes": ["Evitar discussões", "Provar a veracidade da tese", "Fortalecer argumentos com autoridade", "Reduzir o texto"], 
-         "correta": 2},
-        {"pergunta": "O que define uma proposta de intervenção adequada em uma redação no estilo ENEM?", 
-         "opcoes": ["Sugere um novo tema", "Apresenta uma solução vaga", "É detalhada e respeita os direitos humanos", "Evita detalhamentos"], 
-         "correta": 2},
-        {"pergunta": "Como a coesão lexical contribui para a clareza do texto?", 
-         "opcoes": ["Evita repetições", "Diminui a precisão", "Torna o texto mais informal", "Exclui sinônimos"], 
-         "correta": 0},
-        {"pergunta": "Qual a importância de um repertório sociocultural em uma argumentação sólida?", 
-         "opcoes": ["Torna a tese mais complexa", "Comprova a opinião pessoal", "Enriquece os argumentos com contexto", "Simplifica o texto"], 
-         "correta": 2},
-        {"pergunta": "Por que é importante variar a estrutura das frases em uma redação dissertativa?", 
-         "opcoes": ["Para enfeitar o texto", "Para evitar monotonia e enriquecer o estilo", "Para manter a simplicidade", "Para garantir objetividade"], 
-         "correta": 1},
-        {"pergunta": "O que torna uma introdução impactante em uma redação dissertativa?", 
-         "opcoes": ["Começa com um exemplo direto", "É vaga e genérica", "Contextualiza o tema e antecipa a tese", "Evita informações contextuais"], 
-         "correta": 2},
-        {"pergunta": "Como uma análise crítica pode enriquecer um argumento?", 
-         "opcoes": ["Refuta a tese", "Adiciona complexidade e mostra diferentes perspectivas", "Simplifica o argumento", "Elimina detalhes"], 
-         "correta": 1},
-    ]
+    perguntas = buscar_perguntas(3)  # Busca as perguntas do nível 3
 
     pontuacao = 0
     indice_pergunta = 0
@@ -72,33 +56,14 @@ def iniciar_nivel3():
     def verificar_resposta(indice_opcao):
         nonlocal pontuacao, indice_pergunta
         if indice_opcao == perguntas[indice_pergunta]["correta"]:
-            pontuacao += 30
+            pontuacao += 5
             label_pontuacao.config(text=f"Pontuação: {pontuacao}")
         indice_pergunta += 1
         exibir_pergunta()
 
     def finalizar_quiz():
-        tela_nome = tk.Toplevel(tela_nivel3)
-        tela_nome.title("Informe seu nome")
-        tela_nome.geometry("300x150")
-        label_nome = tk.Label(tela_nome, text="Digite seu nome:", font=("Arial", 12), bg="#2d3e50", fg="#fbd11b")
-        label_nome.pack(pady=10)
-
-        entrada_nome = tk.Entry(tela_nome, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-        entrada_nome.pack(pady=10)
-
-        def salvar_e_fechar():
-            nome_usuario = entrada_nome.get()
-            if nome_usuario:
-                salvar_pontuacao("nivel3", pontuacao, nome_usuario)
-                tela_nome.destroy()
-                tela_nivel3.destroy()
-                iniciar_ranking()  # Atualiza o ranking com o novo nome e pontuação
-            else:
-                label_nome.config(text="Por favor, digite um nome!", fg="red")
-
-        botao_salvar = tk.Button(tela_nome, text="Salvar", command=salvar_e_fechar, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-        botao_salvar.pack(pady=10)
+        salvar_pontuacao("nivel3", pontuacao, nome_usuario)  # Salva a pontuação no banco de dados
+        tela_nivel3.destroy()  # Fecha a tela do nível
 
     label_pergunta = tk.Label(tela_nivel3, text="", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b", wraplength=450, justify="center")
     label_pergunta.pack(pady=20)
@@ -112,37 +77,38 @@ def iniciar_nivel3():
         botao.pack(pady=5)
         opcoes_botoes.append(botao)
 
-    exibir_pergunta()
+    exibir_pergunta()  # Exibe a primeira pergunta
 
     tela_nivel3.mainloop()
 
+# Função para exibir a tela inicial onde o usuário digita o nome
+def tela_inicial():
+    tela_inicial = tk.Tk()
+    tela_inicial.title("Informe seu nome")
+    tela_inicial.geometry("400x300")
+    tela_inicial.configure(bg="#2d3e50")
 
-def iniciar_ranking():
-    tela_ranking = tk.Tk()
-    tela_ranking.title("Ranking")
-    tela_ranking.geometry("500x500")
-    tela_ranking.configure(bg="#2d3e50")
+    label_instrucoes = tk.Label(tela_inicial, text="Digite seu nome para começar", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b")
+    label_instrucoes.pack(pady=20)
 
-    try:
-        with open("pontuacoes.json", "r") as arquivo:
-            dados = json.load(arquivo)
-    except FileNotFoundError:
-        dados = {}
+    entrada_nome = tk.Entry(tela_inicial, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+    entrada_nome.pack(pady=10)
 
-    ranking_texto = "Ranking\n\n"
-    for nivel, pontuacoes in dados.items():
-        ranking_texto += f"Nível {nivel}:\n"
-        for entry in pontuacoes:
-            ranking_texto += f"{entry['usuario']} - {entry['pontuacao']} pontos\n"
+    def iniciar_jogo():
+        nome_usuario = entrada_nome.get()
+        if nome_usuario.strip():  # Verifica se o nome não está vazio
+            tela_inicial.destroy()  # Fecha a tela de nome
+            # Inicia o jogo no nível 3
+            iniciar_nivel3(nome_usuario)  # Inicia o jogo no nível 3
+        else:
+            # Se o nome estiver vazio, exibe um erro
+            messagebox.showerror("Erro", "Por favor, insira seu nome.")
 
-    label_ranking = tk.Label(tela_ranking, text=ranking_texto, font=("Arial", 12), bg="#2d3e50", fg="#fbd11b", justify="left")
-    label_ranking.pack(pady=20)
+    botao_iniciar = tk.Button(tela_inicial, text="Iniciar Jogo", command=iniciar_jogo, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
+    botao_iniciar.pack(pady=20)
 
-    voltar_button = tk.Button(tela_ranking, text="Voltar", command=lambda: [tela_ranking.destroy(), iniciar_modulos()], font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-    voltar_button.pack(pady=10)
+    tela_inicial.mainloop()
 
-    tela_ranking.mainloop()
-
-
+# Inicia o jogo a partir da tela inicial
 if __name__ == "__main__":
-    iniciar_nivel3()
+    tela_inicial()  # Chama a função para exibir a tela inicial
