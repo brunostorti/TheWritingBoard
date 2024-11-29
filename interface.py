@@ -97,8 +97,8 @@ def iniciar_interface(nome="Usuário"):
     # Botão "Sair" posicionado abaixo dos outros botões
     def voltar_login():
         tela_interface.destroy()
-        import login
-        login.tela_login()
+        import login  # Certifique-se de que o arquivo login.py esteja no mesmo diretório
+        login.iniciar_login()  # Chama a função iniciar_login do login.py
 
     botao_sair = tk.Button(
         botoes_frame,

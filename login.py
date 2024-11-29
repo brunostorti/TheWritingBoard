@@ -1,3 +1,5 @@
+# login.py
+
 import tkinter as tk
 from tkinter import messagebox
 from pymongo import MongoClient
@@ -60,7 +62,8 @@ def abrir_interface():
     import interface
     interface.iniciar_interface(usuario_logado)
 
-def iniciar_tela_login():
+def iniciar_login():
+    # Função que reinicia a tela de login
     global entrada_nome, entrada_senha, entrada_login_nome, entrada_login_senha
     global tela_login
     tela_login = tk.Tk()
@@ -136,4 +139,4 @@ def iniciar_tela_login():
     tela_login.mainloop()
 
 if __name__ == "__main__":
-    iniciar_tela_login()
+    iniciar_login()

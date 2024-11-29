@@ -1,5 +1,6 @@
 import tkinter as tk
 from pymongo import MongoClient
+import modulos  # Certifique-se de importar o módulo corretamente
 
 # Conectar ao MongoDB
 client = MongoClient('mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
@@ -35,8 +36,12 @@ def buscar_perguntas(nivel):
 def iniciar_nivel1(nome_usuario):
     tela_nivel1 = tk.Tk()
     tela_nivel1.title(f"The Writing Board - Nível 1 (Jogador: {nome_usuario})")
-    tela_nivel1.geometry("500x500")
     tela_nivel1.configure(bg="#2d3e50")
+
+    # Tornando a janela em tela cheia
+    tela_nivel1.attributes('-fullscreen', True)
+    tela_nivel1.bind("<F11>", lambda event: tela_nivel1.attributes('-fullscreen', not tela_nivel1.attributes('-fullscreen')))
+    tela_nivel1.bind("<Escape>", lambda event: tela_nivel1.attributes('-fullscreen', False))  # Esc para sair da tela cheia
 
     perguntas = buscar_perguntas(1)  # Busca as perguntas do nível 1
 
@@ -63,18 +68,29 @@ def iniciar_nivel1(nome_usuario):
 
     def finalizar_quiz():
         salvar_pontuacao("nivel1", pontuacao, nome_usuario)  # Salva a pontuação no banco de dados
+
+        # Exibir botão para navegar para 'modulos.py' após terminar o quiz
+        botao_navegar_modulos = tk.Button(tela_nivel1, text="Voltar para Módulos", command=navegar_para_modulos, font=("Arial", 18, "bold"), bg="#fbd11b", fg="#2d3e50", activebackground="#fbd11b", activeforeground="#2d3e50", width=20, height=2, cursor="hand2", relief="raised", bd=4)
+        botao_navegar_modulos.pack(pady=20)
+
+        # Remove a exibição das perguntas e pontuação após o quiz
+        label_pergunta.pack_forget()
+        label_pontuacao.pack_forget()
+
+    def navegar_para_modulos():
         tela_nivel1.destroy()  # Fecha a tela do nível
+        modulos.iniciar_modulos()  # Substitua esta linha com a navegação para a tela de módulos
 
-    label_pergunta = tk.Label(tela_nivel1, text="", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b", wraplength=450, justify="center")
-    label_pergunta.pack(pady=20)
+    label_pergunta = tk.Label(tela_nivel1, text="", font=("Arial", 22), bg="#2d3e50", fg="#fbd11b", wraplength=800, justify="center", padx=10, pady=10)
+    label_pergunta.pack(pady=40)
 
-    label_pontuacao = tk.Label(tela_nivel1, text=f"Pontuação: {pontuacao}", font=("Arial", 12, "bold"), bg="#2d3e50", fg="#fbd11b")
-    label_pontuacao.pack(pady=10)
+    label_pontuacao = tk.Label(tela_nivel1, text=f"Pontuação: {pontuacao}", font=("Arial", 18, "bold"), bg="#2d3e50", fg="#fbd11b")
+    label_pontuacao.pack(pady=20)
 
     opcoes_botoes = []
     for i in range(4):
-        botao = tk.Button(tela_nivel1, text="", command=lambda i=i: verificar_resposta(i), font=("Arial", 12, "bold"), bg="#fbd11b", fg="#2d3e50", activebackground="#fbd11b", activeforeground="#2d3e50", width=25, height=2, cursor="hand2")
-        botao.pack(pady=5)
+        botao = tk.Button(tela_nivel1, text="", command=lambda i=i: verificar_resposta(i), font=("Arial", 18, "bold"), bg="#fbd11b", fg="#2d3e50", activebackground="#fbd11b", activeforeground="#2d3e50", width=40, height=3, cursor="hand2", relief="raised", bd=4)
+        botao.pack(pady=10)
         opcoes_botoes.append(botao)
 
     exibir_pergunta()  # Exibe a primeira pergunta
@@ -85,14 +101,19 @@ def iniciar_nivel1(nome_usuario):
 def tela_inicial():
     tela_inicial = tk.Tk()
     tela_inicial.title("Informe seu nome")
-    tela_inicial.geometry("400x300")
+    tela_inicial.geometry("800x600")
     tela_inicial.configure(bg="#2d3e50")
 
-    label_instrucoes = tk.Label(tela_inicial, text="Digite seu nome para começar", font=("Arial", 14), bg="#2d3e50", fg="#fbd11b")
-    label_instrucoes.pack(pady=20)
+    # Tornando a janela em tela cheia
+    tela_inicial.attributes('-fullscreen', True)
+    tela_inicial.bind("<F11>", lambda event: tela_inicial.attributes('-fullscreen', not tela_inicial.attributes('-fullscreen')))
+    tela_inicial.bind("<Escape>", lambda event: tela_inicial.attributes('-fullscreen', False))  # Esc para sair da tela cheia
 
-    entrada_nome = tk.Entry(tela_inicial, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-    entrada_nome.pack(pady=10)
+    label_instrucoes = tk.Label(tela_inicial, text="Digite seu nome para começar", font=("Arial", 22), bg="#2d3e50", fg="#fbd11b")
+    label_instrucoes.pack(pady=40)
+
+    entrada_nome = tk.Entry(tela_inicial, font=("Arial", 20), bg="#fbd11b", fg="#2d3e50", bd=2, relief="solid", width=30)
+    entrada_nome.pack(pady=20)
 
     def iniciar_jogo():
         nome_usuario = entrada_nome.get()
@@ -103,8 +124,8 @@ def tela_inicial():
             # Se o nome estiver vazio, exibe um erro
             tk.messagebox.showerror("Erro", "Por favor, insira seu nome.")
 
-    botao_iniciar = tk.Button(tela_inicial, text="Iniciar Jogo", command=iniciar_jogo, font=("Arial", 12), bg="#fbd11b", fg="#2d3e50")
-    botao_iniciar.pack(pady=20)
+    botao_iniciar = tk.Button(tela_inicial, text="Iniciar Jogo", command=iniciar_jogo, font=("Arial", 20), bg="#fbd11b", fg="#2d3e50", relief="raised", bd=4)
+    botao_iniciar.pack(pady=40)
 
     tela_inicial.mainloop()
 
