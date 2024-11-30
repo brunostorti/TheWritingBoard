@@ -1,13 +1,13 @@
 import tkinter as tk
 from PIL import Image, ImageTk  # Para trabalhar com imagens
-from login import tela_login  # Importa a função tela_login de login.py
+from login import iniciar_login  # Importa a função tela_login de login.py
 from pymongo import MongoClient  # Importa o MongoClient para conectar ao MongoDB
 
 
 # Função para redirecionar o jogador para a tela de login
 def abrir_tela_login():
     tela_inicio.destroy()  # Fecha a tela de início do Tkinter
-    tela_login()  # Chama a função tela_login para exibir a tela de login
+    iniciar_login()  # Chama a função tela_login para exibir a tela de login
 
 
 # Função para conectar ao MongoDB
@@ -59,7 +59,7 @@ try:
 
     # Imagem 'titulo.png' ao lado direito
     img_titulo = Image.open("imagens/titulo.png")  # Substitua pelo caminho correto
-    img_titulo = img_titulo.resize((600, 250))  # Ajuste do tamanho
+    img_titulo = img_titulo.resize((800, 320))  # Ajuste do tamanho
     titulo_img = ImageTk.PhotoImage(img_titulo)
     titulo_label = tk.Label(titulo_frame, image=titulo_img, bg="#1c2533")
     titulo_label.image = titulo_img

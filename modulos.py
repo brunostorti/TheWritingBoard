@@ -62,17 +62,17 @@ def iniciar_modulos():
     def abrir_nivel1():
         tela_modulos.destroy()
         import nivel1
-        nivel1.iniciar_nivel1()
+        nivel1.tela_inicial1()
 
     def abrir_nivel2():
         tela_modulos.destroy()
         import nivel2
-        nivel2.iniciar_nivel2()
+        nivel2.tela_inicial2()
 
     def abrir_nivel3():
         tela_modulos.destroy()
         import nivel3
-        nivel3.iniciar_nivel3()
+        nivel3.tela_inicial3()
 
     def voltar_interface():
         tela_modulos.destroy()

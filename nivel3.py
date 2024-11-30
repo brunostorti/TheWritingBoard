@@ -1,6 +1,7 @@
 import tkinter as tk
 from pymongo import MongoClient
 from tkinter import messagebox
+from PIL import Image, ImageTk  # Certifique-se de importar o Image e ImageTk corretamente
 import modulos  # Certifique-se de importar o módulo de módulos corretamente
 
 # Conectar ao MongoDB
@@ -69,9 +70,35 @@ def iniciar_nivel3(nome_usuario):
     def finalizar_quiz():
         salvar_pontuacao("nivel3", pontuacao, nome_usuario)  # Salva a pontuação no banco de dados
 
+        # Determina a imagem a ser exibida com base na pontuação
+        casa = min(pontuacao // 30, 10)  # Cada 30 pontos representam uma casa, e no máximo até casa 10
+        imagem_caminho = f"imagens/pinocasa{casa}.png"  # Caminho para a imagem
+
+        try:
+            img = Image.open(imagem_caminho)
+
+            # Ajusta o tamanho da imagem dependendo da casa (caso seja a última casa, ajusta para um tamanho maior)
+            if casa == 10:
+                largura_maxima = 800  # Largura máxima da imagem
+                altura_maxima = 800  # Altura máxima da imagem
+                img.thumbnail((largura_maxima, altura_maxima))  # Ajusta a imagem para o tamanho máximo mantendo a proporção
+            else:
+                img = img.resize((tela_nivel3.winfo_width(), tela_nivel3.winfo_height()))  # Ajusta a imagem para tela cheia
+
+            img_tk = ImageTk.PhotoImage(img)
+
+            # Criar um label para a imagem
+            imagem_label = tk.Label(tela_nivel3, image=img_tk, bg="#2d3e50")
+            imagem_label.image = img_tk
+            # Coloca a imagem na tela, mas sem sobrepor os botões
+            imagem_label.place(relx=0.5, rely=0.5, anchor="center")  # Centraliza a imagem na tela
+
+        except Exception as e:
+            print(f"Erro ao carregar a imagem {imagem_caminho}: {e}")
+
         # Exibir botão para navegar para 'modulos.py' após terminar o quiz
         botao_navegar_modulos = tk.Button(tela_nivel3, text="Voltar para Módulos", command=navegar_para_modulos, font=("Arial", 18, "bold"), bg="#fbd11b", fg="#2d3e50", activebackground="#fbd11b", activeforeground="#2d3e50", width=20, height=2, cursor="hand2", relief="raised", bd=4)
-        botao_navegar_modulos.pack(pady=20)
+        botao_navegar_modulos.pack(pady=135)  # Aumente o valor de "pady" para mover o botão para baixo
 
         # Remove a exibição das perguntas e pontuação após o quiz
         label_pergunta.pack_forget()
@@ -98,7 +125,7 @@ def iniciar_nivel3(nome_usuario):
     tela_nivel3.mainloop()
 
 # Função para exibir a tela inicial onde o usuário digita seu nome
-def tela_inicial():
+def tela_inicial3():
     tela_inicial = tk.Tk()
     tela_inicial.title("Informe seu nome")
     tela_inicial.geometry("800x600")
@@ -129,6 +156,5 @@ def tela_inicial():
 
     tela_inicial.mainloop()
 
-# Inicia o jogo a partir da tela inicial
-if __name__ == "__main__":
-    tela_inicial()  # Chama a função para exibir a tela inicial
+# Chama a função para exibir a tela inicial
+tela_inicial3()
