@@ -1,30 +1,28 @@
 import tkinter as tk
-from PIL import Image, ImageTk  # Para trabalhar com imagens
-from login import iniciar_login  # Importa a função tela_login de login.py
-from pymongo import MongoClient  # Importa o MongoClient para conectar ao MongoDB
+from PIL import Image, ImageTk 
+from login import iniciar_login 
+from pymongo import MongoClient 
 
 
-# Função para redirecionar o jogador para a tela de login
+
 def abrir_tela_login():
-    tela_inicio.destroy()  # Fecha a tela de início do Tkinter
-    iniciar_login()  # Chama a função tela_login para exibir a tela de login
+    tela_inicio.destroy() 
+    iniciar_login() 
 
 
-# Função para conectar ao MongoDB
 def conectar_mongodb():
     try:
-        # Cria a conexão usando o URI do MongoDB
+       
         client = MongoClient(
             "mongodb+srv://joaoalvarez:PjOwQniGDQGSJzvo@cluster0.tguge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
         )
 
-        # Acessa o banco de dados desejado
-        db = client["ProjetoPI"]  # Nome correto do banco de dados: ProjetoPI
+        
+        db = client["ProjetoPI"]  
 
-        # Acessa a coleção de usuários (onde nome e senha são armazenados)
-        colecao_usuarios = db["usuarios"]  # Coleção correta de usuários
+        colecao_usuarios = db["usuarios"]  
 
-        # Exemplo de operação: contar o número de documentos na coleção
+        
         numero_de_documentos = colecao_usuarios.count_documents({})
         print(f"Número de documentos na coleção de usuários: {numero_de_documentos}")
 
@@ -32,34 +30,33 @@ def conectar_mongodb():
         print("Erro ao conectar ao MongoDB:", e)
 
 
-# Configurações da tela de início
+
 tela_inicio = tk.Tk()
 tela_inicio.title("The Writing Board - Tela de Início")
-tela_inicio.configure(bg="#1c2533")  # Fundo azul-acinzentado sofisticado
+tela_inicio.configure(bg="#1c2533") 
 
-# Habilitar tela cheia
+
 tela_inicio.attributes("-fullscreen", True)
 
-# Frame principal para centralizar conteúdo
+
 main_frame = tk.Frame(tela_inicio, bg="#1c2533", padx=20, pady=20)
 main_frame.pack(expand=True, fill="both")
 
-# Adicionando o layout com a imagem 'images.png' e o título
+
 titulo_frame = tk.Frame(main_frame, bg="#1c2533")
 titulo_frame.pack(pady=(50, 30), anchor="center")
 
 try:
-    # Imagem 'images.png' à esquerda
-    img_esquerda = Image.open("imagens/images.png")  # Substitua pelo caminho correto
-    img_esquerda = img_esquerda.resize((150, 150))  # Redimensionar a imagem
+   
+    img_esquerda = Image.open("imagens/images.png")  
+    img_esquerda = img_esquerda.resize((150, 150)) 
     esquerda_img = ImageTk.PhotoImage(img_esquerda)
     esquerda_label = tk.Label(titulo_frame, image=esquerda_img, bg="#1c2533")
     esquerda_label.image = esquerda_img
     esquerda_label.pack(side="left", padx=20)
 
-    # Imagem 'titulo.png' ao lado direito
-    img_titulo = Image.open("imagens/titulo.png")  # Substitua pelo caminho correto
-    img_titulo = img_titulo.resize((800, 320))  # Ajuste do tamanho
+    img_titulo = Image.open("imagens/titulo.png")  
+    img_titulo = img_titulo.resize((800, 320)) 
     titulo_img = ImageTk.PhotoImage(img_titulo)
     titulo_label = tk.Label(titulo_frame, image=titulo_img, bg="#1c2533")
     titulo_label.image = titulo_img
@@ -67,21 +64,19 @@ try:
 except Exception as e:
     print(f"Erro ao carregar a imagem: {e}")
 
-# Linha decorativa abaixo das imagens
 linha = tk.Frame(main_frame, bg="#ffd700", height=3, width=700)
 linha.pack(pady=(5, 15), fill="x")
 
-# Seção do botão Iniciar com mais espaçamento acima e abaixo
 secao_botao = tk.Frame(main_frame, bg="#1c2533")
-secao_botao.pack(pady=(40, 60))  # Aumentando o espaçamento inferior
+secao_botao.pack(pady=(40, 60)) 
 
 botao_iniciar = tk.Button(
     secao_botao,
     text="Iniciar",
     font=("Arial", 20, "bold"),
-    bg="#ffd700",  # Botão dourado
-    fg="#1c2533",  # Texto azul-acinzentado
-    activebackground="#e6c300",  # Amarelo mais intenso ao clicar
+    bg="#ffd700",  
+    fg="#1c2533",  
+    activebackground="#e6c300",  
     activeforeground="white",
     width=15,
     height=2,
@@ -92,7 +87,6 @@ botao_iniciar = tk.Button(
 )
 botao_iniciar.pack()
 
-# Rodapé com estilo premium
 rodape = tk.Frame(tela_inicio, bg="#ffd700", height=40)
 rodape.pack(side="bottom", fill="x")
 texto_rodape = tk.Label(
@@ -104,5 +98,4 @@ texto_rodape = tk.Label(
 )
 texto_rodape.pack()
 
-# Inicia a tela
 tela_inicio.mainloop()

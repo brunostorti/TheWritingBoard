@@ -7,16 +7,13 @@ def iniciar_regras():
     tela_regras.attributes("-fullscreen", True)
     tela_regras.configure(bg="#1c2533")
 
-    # Frame principal
     frame_principal = tk.Frame(tela_regras, bg="#1c2533")
     frame_principal.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-    # Título e Logo com alinhamento moderno
     frame_logo_titulo = tk.Frame(frame_principal, bg="#1c2533")
     frame_logo_titulo.pack(pady=(10, 30))
 
     try:
-        # Adicionando logo com bordas arredondadas
         img = Image.open("imagens/images.png")
         img = img.resize((120, 120))
         logo = ImageTk.PhotoImage(img)
@@ -30,11 +27,9 @@ def iniciar_regras():
     except Exception as e:
         print(f"Erro ao carregar o título: {e}")
 
-    # Linha divisora decorativa
     linha = tk.Canvas(frame_principal, bg="#ffd700", height=2, highlightthickness=0)
     linha.pack(fill=tk.X, pady=20)
 
-    # Moldura estilizada para regras
     moldura_regras = tk.Frame(
         frame_principal,
         bg="#2a3b4d",
@@ -45,7 +40,6 @@ def iniciar_regras():
     )
     moldura_regras.pack(pady=20, padx=40, fill=tk.BOTH, expand=True)
 
-    # Texto das regras
     regras_texto = """
 🖋️ **Bem-vindo ao The Writing Board!**
 
@@ -60,7 +54,6 @@ Objetivo:
 
 ✨ Boa sorte e lembre-se: pratique sua escrita e análise!
 """
-    # Label estilizado para texto das regras
     label_regras = tk.Label(
         moldura_regras,
         text=regras_texto,
@@ -74,13 +67,11 @@ Objetivo:
     )
     label_regras.pack(fill=tk.BOTH, expand=True)
 
-    # Função para botão voltar
     def voltar_interface():
         tela_regras.destroy()
         import interface
         interface.iniciar_interface()
 
-    # Botão estilizado
     botao_voltar = tk.Button(
         frame_principal,
         text="⏪ Voltar",
@@ -97,7 +88,6 @@ Objetivo:
     )
     botao_voltar.pack(pady=(30, 10))
 
-    # Rodapé elegante
     rodape = tk.Frame(tela_regras, bg="#ffd700", height=40)
     rodape.pack(side=tk.BOTTOM, fill=tk.X)
     texto_rodape = tk.Label(

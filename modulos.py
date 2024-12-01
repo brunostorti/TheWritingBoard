@@ -4,33 +4,28 @@ from PIL import Image, ImageTk
 def iniciar_modulos():
     tela_modulos = tk.Tk()
     tela_modulos.title("Módulos de Redação")
-    tela_modulos.configure(bg="#1c2533")  # Fundo sofisticado (azul-acinzentado)
+    tela_modulos.configure(bg="#1c2533")  
 
-    # Habilitar tela cheia
     tela_modulos.attributes("-fullscreen", True)
 
-    # Frame principal para centralizar tudo
-    main_frame = tk.Frame(tela_modulos, bg="#1c2533", padx=20, pady=20)  # Adicionando padding
+    main_frame = tk.Frame(tela_modulos, bg="#1c2533", padx=20, pady=20)  
     main_frame.pack(expand=True, fill="both")
 
-    # Adicionando a logo images.png e título.png ao topo centralizado
     try:
-        img = Image.open("imagens/images.png")  # Caminho da logo
-        img = img.resize((180, 180))  # Redimensionar para ajuste
+        img = Image.open("imagens/images.png") 
+        img = img.resize((180, 180))  
         logo = ImageTk.PhotoImage(img)
 
-        titulo_img = Image.open("imagens/titulo.png")  # Caminho da imagem título
-        titulo_img = titulo_img.resize((240, 180))  # Ajustar o tamanho da imagem título
+        titulo_img = Image.open("imagens/titulo.png")  
+        titulo_img = titulo_img.resize((240, 180))  
         titulo = ImageTk.PhotoImage(titulo_img)
 
-        # Criando um frame para armazenar as duas imagens
         logos_frame = tk.Frame(main_frame, bg="#1c2533")
         logos_frame.pack(pady=(20, 10))
 
-        # Colocando as imagens lado a lado com espaçamento adequado
         logo_label = tk.Label(logos_frame, image=logo, bg="#1c2533")
         logo_label.image = logo
-        logo_label.pack(side="left", padx=(10, 20))  # Ajuste entre as imagens (menor)
+        logo_label.pack(side="left", padx=(10, 20))  
 
         titulo_label = tk.Label(logos_frame, image=titulo, bg="#1c2533")
         titulo_label.image = titulo
@@ -39,26 +34,22 @@ def iniciar_modulos():
     except Exception as e:
         print(f"Erro ao carregar as imagens: {e}")
 
-    # Mensagem de boas-vindas
     mensagem_bem_vindo = tk.Label(
         main_frame,
         text="Escolha um nível de redação",
         font=("Arial", 30, "bold"),
         bg="#1c2533",
-        fg="#ffd700",  # Dourado suave
+        fg="#ffd700",  
         pady=10
     )
     mensagem_bem_vindo.pack(pady=(10, 5))
 
-    # Linha decorativa cortada
-    linha = tk.Frame(main_frame, bg="#ffd700", height=3, width=300)  # Largura reduzida
+    linha = tk.Frame(main_frame, bg="#ffd700", height=3, width=300)  
     linha.pack(pady=(5, 15), fill="x")
 
-    # Criando um frame para botões com borda arredondada
     botoes_frame = tk.Frame(main_frame, bg="#1c2533")
     botoes_frame.pack(pady=40)
 
-    # Funções de navegação
     def abrir_nivel1():
         tela_modulos.destroy()
         import nivel1
@@ -79,24 +70,22 @@ def iniciar_modulos():
         import interface
         interface.iniciar_interface()
 
-    # Estilo dos botões
     estilo_botao = {
-        "font": ("Arial", 16, "bold"),  # Tamanho maior da fonte
-        "bg": "#ffd700",  # Dourado
-        "fg": "#1c2533",  # Texto em azul-acinzentado
-        "activebackground": "#e6c300",  # Amarelo mais intenso ao clicar
+        "font": ("Arial", 16, "bold"),  
+        "bg": "#ffd700",  
+        "fg": "#1c2533",  
+        "activebackground": "#e6c300", 
         "activeforeground": "white",
-        "width": 25,  # Botões mais largos
-        "height": 3,  # Botões mais altos
+        "width": 25,  
+        "height": 3,  
         "relief": "groove",
-        "bd": 5,  # Borda mais grossa
+        "bd": 5,  
         "cursor": "hand2",
-        "highlightthickness": 2,  # Efeito de borda ao passar o mouse
-        "highlightbackground": "#ffd700",  # Cor da borda
-        "highlightcolor": "#ffd700"  # Cor da borda ativa
+        "highlightthickness": 2, 
+        "highlightbackground": "#ffd700",  
+        "highlightcolor": "#ffd700"  
     }
 
-    # Botões para os níveis
     botao_nivel1 = tk.Button(botoes_frame, text="Nível 1", command=abrir_nivel1, **estilo_botao)
     botao_nivel1.grid(row=0, column=0, padx=20, pady=15, sticky="ew")
 
@@ -106,7 +95,6 @@ def iniciar_modulos():
     botao_nivel3 = tk.Button(botoes_frame, text="Nível 3", command=abrir_nivel3, **estilo_botao)
     botao_nivel3.grid(row=2, column=0, padx=20, pady=15, sticky="ew")
 
-    # Botão "Voltar"
     botao_voltar = tk.Button(
         botoes_frame,
         text="Voltar",
@@ -127,7 +115,7 @@ def iniciar_modulos():
     )
     botao_voltar.grid(row=3, column=0, columnspan=2, pady=(30, 0), sticky="ew")
 
-    # Rodapé
+    
     rodape = tk.Frame(tela_modulos, bg="#ffd700", height=40, width=900)
     rodape.pack(side="bottom", fill="x")
     texto_rodape = tk.Label(

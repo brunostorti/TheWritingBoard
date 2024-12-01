@@ -1,11 +1,9 @@
-# login.py
-
 import tkinter as tk
 from tkinter import messagebox
 from pymongo import MongoClient
-import bcrypt  # Importa o módulo bcrypt para hashing de senhas
+import bcrypt  
 
-usuario_logado = ""  # Variável global para armazenar o nome do usuário logado
+usuario_logado = ""  
 
 def conectar_mongodb():
     try:
@@ -39,7 +37,7 @@ def cadastrar_usuario():
                 entrada_senha.delete(0, tk.END)
 
 def realizar_login():
-    global usuario_logado  # Tornando a variável global
+    global usuario_logado  
     nome = entrada_login_nome.get()
     senha = entrada_login_senha.get()
 
@@ -49,7 +47,7 @@ def realizar_login():
         usuario = usuarios_collection.find_one({"nome": nome})
         if usuario:
             if bcrypt.checkpw(senha.encode('utf-8'), usuario['senha']):
-                usuario_logado = nome  # Aqui o nome do usuário logado é atribuído
+                usuario_logado = nome  
                 messagebox.showinfo("Sucesso", f"Bem-vindo, {nome}!")
                 tela_login.destroy()
                 abrir_interface()
@@ -63,12 +61,12 @@ def abrir_interface():
     interface.iniciar_interface(usuario_logado)
 
 def iniciar_login():
-    # Função que reinicia a tela de login
+ 
     global entrada_nome, entrada_senha, entrada_login_nome, entrada_login_senha
     global tela_login
     tela_login = tk.Tk()
     tela_login.title("The Writing Board - Tela de Login")
-    tela_login.state("zoomed")  # Habilita tela cheia
+    tela_login.state("zoomed") 
     tela_login.configure(bg="#222831")
 
     titulo = tk.Label(
@@ -80,7 +78,6 @@ def iniciar_login():
     )
     titulo.pack(pady=40)
 
-    # Seção de cadastro
     secao_cadastro = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=30, pady=30)
     secao_cadastro.place(relx=0.5, rely=0.35, anchor="center")
 
@@ -108,7 +105,6 @@ def iniciar_login():
     )
     botao_cadastrar.grid(row=3, column=0, columnspan=2, pady=20)
 
-    # Seção de login
     secao_login = tk.Frame(tela_login, bg="#2d3e50", bd=5, relief="solid", padx=30, pady=30)
     secao_login.place(relx=0.5, rely=0.65, anchor="center")
 
